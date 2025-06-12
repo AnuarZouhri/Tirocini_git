@@ -1,7 +1,7 @@
 import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
-from Classi.PieChart import PieChartFrame
+from Classes.PieChart import PieChartFrame
 
 class MainApplication(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
