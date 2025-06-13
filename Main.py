@@ -2,6 +2,7 @@ import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from Classes.PieChart import PieChartFrame
+#importazione per il grafico cartesiano:
 
 class MainApplication(tk.Frame):
     def __init__(self, parent, *args, **kwargs):

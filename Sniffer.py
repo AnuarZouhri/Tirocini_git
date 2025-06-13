@@ -9,14 +9,17 @@ from queue import Queue
 packet_queue = Queue()
 
 def sniffing():
-    with subprocess.Popen("D:\\WiresharkAnalyzer\\scansione.bat",stdout=subprocess.PIPE,
+    with subprocess.Popen("C:\\Users\\darka\\scansione.bat",stdout=subprocess.PIPE,
                      stderr=subprocess.DEVNULL, text=True) as proc:
+                         print(1)
                          for line in proc.stdout:
+                            print(2)
                             fields = line.strip().split(',')
                             epoch_time = float(fields[2])
                             dt = datetime.datetime.fromtimestamp(epoch_time)
                             if len(fields) >= 4:
                                 formatted = (f"ip src: {fields[0]}, ip dst: {fields[1]}, timestamp: {dt.strftime('%Y-%m-%d %H:%M:%S.%f')} protocol: {fields[3]}, MAC src: {fields[4]}")
+                                print(formatted)
                                 packet_queue.put(formatted)
 
 
@@ -31,9 +34,8 @@ text_area = tk.Text(root, wrap="none")
 text_area.pack(fill="both", expand=True)
 
 def update_gui():
-    print(2)
+
     while not packet_queue.empty():
-        print(2)
         packet = packet_queue.get()
         print(packet)
         text_area.insert("end", packet + "\n")
