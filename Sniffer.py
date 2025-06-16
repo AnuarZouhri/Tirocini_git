@@ -9,7 +9,7 @@ from queue import Queue
 packet_queue = Queue()
 
 def sniffing():
-    with subprocess.Popen("C:\\Users\\darka\\scansione.bat",stdout=subprocess.PIPE,
+    with subprocess.Popen("D:\\WiresharkAnalyzer\\scansione.bat",stdout=subprocess.PIPE,
                      stderr=subprocess.DEVNULL, text=True) as proc:
                          print(1)
                          for line in proc.stdout:
@@ -18,7 +18,7 @@ def sniffing():
                             epoch_time = float(fields[2])
                             dt = datetime.datetime.fromtimestamp(epoch_time)
                             if len(fields) >= 4:
-                                formatted = (f"ip src: {fields[0]}, ip dst: {fields[1]}, timestamp: {dt.strftime('%Y-%m-%d %H:%M:%S.%f')} protocol: {fields[3]}, MAC src: {fields[4]}")
+                                formatted = (f"ip src: {fields[0]}, ip dst: {fields[1]}, timestamp: {dt.strftime('%Y-%m-%d %H:%M:%S.%f')} protocol: {fields[3]}, MAC src: {fields[4]}, size: {fields[5]}")
                                 print(formatted)
                                 packet_queue.put(formatted)
 
@@ -50,16 +50,19 @@ ttk.Label(frm, text="Hello World!").grid(column=0, row=0)
 ttk.Button(frm, text="Quit", command=root.destroy).grid(column=1, row=0)'''
 
 
+def main():
+    thread_sniff = Thread(target=sniffing, daemon=True)
+    thread_sniff.start()
+    # sniffing()
 
-thread_sniff = Thread(target = sniffing, daemon = True)
-thread_sniff.start()
-#sniffing()
+    # while True:
+    #   print(2)
+    #  sleep(2)
 
+    update_gui()
+    root.mainloop()
 
-#while True:
- #   print(2)
-  #  sleep(2)
+    # tuo codice qui
 
-update_gui()
-root.mainloop()
-
+if __name__ == "__main__":
+    main()
