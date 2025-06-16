@@ -24,41 +24,59 @@ class MainApplication(tk.Frame):
             self.df["Pacchetti totali al secondo"]
         ) * 100
 
-        # === 2. Tabella sopra tutto ===
-        self.create_table(self.df)
+        # === 2. Tabella con etichetta centrata ===
+        table_frame = tk.Frame(self)
+        table_frame.pack(side=tk.TOP, fill=tk.X, padx=10, pady=(10, 0))
 
-        # === 3. Grafico cartesiano ===
+        label_tabella = tk.Label(table_frame, text="Tabella Statistiche Pacchetti", font=("Helvetica", 12, "bold"))
+        label_tabella.pack(side=tk.TOP, anchor="center", pady=(0, 5))
+
+        self.create_table(table_frame, self.df)
+
+        # === 3. Grafico cartesiano con etichetta centrata ===
+        label_cartesiano = tk.Label(self, text="Grafico Cartesiano", font=("Helvetica", 12, "bold"))
+        label_cartesiano.pack(side=tk.TOP, anchor="center", pady=(15, 5))
+
         self.cartesianChart = CartesianPlotFrame(self, title="Grafico XY",
                                                  x_data=[0, 1, 2, 3, 4],
                                                  y_data=[0, 1, 4, 9, 16])
-        self.cartesianChart.pack(side=tk.TOP, fill=tk.BOTH, expand=True, pady=0)
+        self.cartesianChart.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-        # === 4. Due grafici a torta ===
+        # === 4. Due grafici a torta con etichette ===
         bottom_frame = tk.Frame(self)
-        bottom_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        bottom_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, pady=(15, 0))
 
-        self.pieChart1 = PieChartFrame(bottom_frame, 'Test1')
-        self.pieChart2 = PieChartFrame(bottom_frame, 'Test2')
+        # Frame sinistro (Torta 1)
+        left_frame = tk.Frame(bottom_frame)
+        left_frame.pack(side=tk.LEFT, expand=True, fill=tk.BOTH, padx=10)
 
-        self.pieChart1.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
-        self.pieChart2.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+        label_torta1 = tk.Label(left_frame, text="Distribuzione Torta 1", font=("Helvetica", 12, "bold"))
+        label_torta1.pack(side=tk.TOP, anchor="center", pady=(0, 5))
 
-    def create_table(self, df):
-        """Crea una tabella con i dati del DataFrame in cima alla finestra, con spaziatura compatta."""
-        table_frame = tk.Frame(self)
-        table_frame.pack(side=tk.TOP, fill=tk.X, padx=10, pady=0)
+        self.pieChart1 = PieChartFrame(left_frame, 'Test1')
+        self.pieChart1.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
 
+        # Frame destro (Torta 2)
+        right_frame = tk.Frame(bottom_frame)
+        right_frame.pack(side=tk.LEFT, expand=True, fill=tk.BOTH, padx=10)
+
+        label_torta2 = tk.Label(right_frame, text="Distribuzione Torta 2", font=("Helvetica", 12, "bold"))
+        label_torta2.pack(side=tk.TOP, anchor="center", pady=(0, 5))
+
+        self.pieChart2 = PieChartFrame(right_frame, 'Test2')
+        self.pieChart2.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
+
+    def create_table(self, parent, df):
+        """Crea una tabella all'interno del frame specificato (con spaziatura compatta)."""
         columns = list(df.columns)
         style = ttk.Style()
         style.configure("Treeview", rowheight=18)
-        tree = ttk.Treeview(table_frame, columns=columns, show='headings', height=3)
+        tree = ttk.Treeview(parent, columns=columns, show='headings', height=3)
 
-        # Intestazioni
         for col in columns:
             tree.heading(col, text=col)
             tree.column(col, anchor=tk.CENTER, width=150)
 
-        # Inserimento righe
         for index, row in df.iterrows():
             tree.insert('', tk.END, values=list(row))
 
