@@ -34,7 +34,7 @@ class Queue:
                 self.condition.wait()
 
             self.insert(e)
-            print(f"[PRODUTTORE] Prodotto: {e} (totale: {self.getsize()})")
+            #print(f"[PRODUTTORE] Prodotto: {e} (totale: {self.getsize()})")
 
             # Notifica il consumatore se ci sono almeno 50 elementi
             if self.getsize() >= 10:
@@ -51,7 +51,7 @@ class Queue:
 
             copy = self.deepcopy()
             self.clear()
-            print("[CONSUMATORE] Fine consumo")
+            #print("[CONSUMATORE] Fine consumo")
 
 
             # Sblocca il produttore

@@ -39,7 +39,7 @@ class CartesianPlotFrame(tk.Frame):
         self.canvas.draw()
         #posiziona il canvas nel frame usando pack(), facendolo espandere e riempire tutto lo spazio disponibile
         self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
-
+        self.bind("<Configure>", self._on_resize)
     # Metodo per aggiornare i dati:
 
     #metodo pubblico per modificare i dati del grafico dopo la creazione:
@@ -54,4 +54,7 @@ class CartesianPlotFrame(tk.Frame):
         self.ax.grid(True)
         #aggiorna il disegno nella finestra:
         self.canvas.draw()
+
+    def _on_resize(self, event):
+        self.canvas.draw_idle()
 

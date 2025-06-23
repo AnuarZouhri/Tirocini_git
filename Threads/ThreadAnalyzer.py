@@ -1,8 +1,5 @@
 import threading
 from collections import defaultdict, deque
-import time
-
-from Sniffer import packet_queue
 
 
 class ThreadAnalyzer(threading.Thread):
@@ -45,8 +42,9 @@ class ThreadAnalyzer(threading.Thread):
                 if mac not in mac_traffic:
                     mac_traffic[mac] = 0.0
                 mac_traffic[mac] += pkt['size']/self.total_byte
-        print('aggiornamento completato')
-        self.data.updateData(mac_traffic)
+        #print('aggiornamento completato')
+        print(mac_traffic)
+        self.data.update_data(mac_traffic)
 
 
     def run(self):

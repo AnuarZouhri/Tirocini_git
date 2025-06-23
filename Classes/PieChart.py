@@ -31,14 +31,25 @@ class PieChartFrame(tk.Frame):
         self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
     def drawPie(self):
-        """
-            La funzioen drawPie sovrascrive il precedente grafico a torta utilizzando i valori
-            presenti in self.labels e self.values.
-        """
         self.ax.clear()
-        self.pie = self.ax.pie(self.values, labels=self.labels, autopct=self.autopct)
-        self.ax.axis('equal')
 
+        wedges, texts, autotexts = self.ax.pie(
+            self.values,
+            labels=None,
+            autopct=self.autopct,
+            startangle=90
+        )
+        self.ax.axis('equal')  # mantiene la torta rotonda
+
+        # Legenda sotto al grafico
+        self.ax.legend(
+            wedges,
+            self.labels,
+            title="MAC Address",
+            loc='upper center',
+            bbox_to_anchor=(0.7, 0.6),  # sotto al grafico
+
+        )
     def autopct(self, pct):
         return f'{pct:.1f}%' if pct >= 1 else ''
 
