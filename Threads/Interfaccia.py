@@ -13,8 +13,8 @@ class Interfaccia:
         self.pie_chart1 = PieChartFrame(self.parent,'Traffico per MAC')
         self.pie_chart1.pack(fill=tk.BOTH, expand=True)
 
-        self.cartesian_plot_frame = CartesianPlotFrame(self.parent, "Bit/s in media")
-        self.cartesian_plot_frame.pack(fill=tk.BOTH, expand=True)
+        #self.cartesian_plot_frame = CartesianPlotFrame(self.parent, "Bit/s in media")
+        #self.cartesian_plot_frame.pack(fill=tk.BOTH, expand=True)
 
         #dati usati per aggiornare l'interfaccia
         self.mac_traffic_percent = {}

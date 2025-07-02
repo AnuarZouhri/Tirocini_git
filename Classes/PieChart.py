@@ -16,10 +16,14 @@ class PieChartFrame(tk.Frame):
         super().__init__(master,**kwargs)
 
         if data is None:
-            data = {"A": 40, "B": 30, "C": 30}
+            print(1)
+            self.labels = []
+            self.values = []
+        else:
+            print(2)
+            self.labels = list(data.keys())
+            self.values = list(data.values())
 
-        self.labels = list(data.keys())
-        self.values = list(data.values())
 
         self.fig = Figure(figsize=(4, 4))
         self.ax = self.fig.add_subplot(111)

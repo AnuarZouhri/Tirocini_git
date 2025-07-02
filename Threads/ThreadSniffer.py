@@ -32,5 +32,4 @@ class ThreadSniffer(threading.Thread):
 
 
                     if len(fields) >= 4:
-
                         self.queue.produce(pk)
