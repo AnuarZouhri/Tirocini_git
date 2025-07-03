@@ -5,6 +5,7 @@ from Classes.PieChart import PieChartFrame
 from Classes.ip_mac_table import IpMacTable
 from Classes.table import PacketTable
 from Classes.alert_table import DoSAlertTable
+from Classes.avg_size_plot import LivePlot
 
 class Interfaccia:
 
@@ -15,7 +16,26 @@ class Interfaccia:
         main_frame = tk.Frame(self.parent)
         main_frame.pack(fill="both", expand=True)
 
-        frame_width, frame_height = 420, 300
+        frame_width, frame_height = 300, 150
+
+
+        left_frame = tk.Frame(main_frame)
+        left_frame.pack(side="left", fill="both", expand=True)
+
+        alert_table_frame = tk.Frame(left_frame, width=frame_width, height=frame_height)
+        alert_table_frame.pack(side="top", fill="both", expand=True, pady=(0, 5))
+        alert_table_frame.pack_propagate(False)
+
+        '''cartesian_frame = tk.Frame(left_frame, width=frame_width, height=frame_height)
+        cartesian_frame.pack(side="top", fill="both", expand=True, pady=(0, 5))
+        cartesian_frame.pack_propagate(False)
+
+        self.live_plot = LivePlot(cartesian_frame)'''
+
+        self.alert_table = DoSAlertTable(alert_table_frame)
+        self.alert_table.pack(fill="both", expand=True)
+
+
 
         right_frame = tk.Frame(main_frame)
         right_frame.pack(side="right", fill="both", expand=True)
@@ -39,13 +59,10 @@ class Interfaccia:
         self.pie_chart3 = PieChartFrame(pie_charts_frame, 'IP dst distribution', legend="IP dst")
         self.pie_chart3.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        alert_tabel_frame = tk.Frame(right_frame)
+        '''alert_tabel_frame = tk.Frame(right_frame)
         alert_tabel_frame.pack(side="bottom", fill="both", expand=True, pady=(5, 0))
         self.alert_table = DoSAlertTable(alert_tabel_frame)
-        self.alert_table.pack(fill="both", expand=True)
-
-
-
+        self.alert_table.pack(fill="both", expand=True)'''
 
         self.collection_graphics = {'packet per protocol' : self.pie_chart1,
                                     'IP source distribution' : self.pie_chart2,
@@ -67,4 +84,7 @@ class Interfaccia:
         self.alert_table.clear_all_alerts()
         if data:
             self.alert_table.add_alert(data)
+
+    def update_live_plot(self,data):
+        self.live_plot.update(data)
 

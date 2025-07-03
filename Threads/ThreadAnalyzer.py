@@ -111,6 +111,7 @@ class ThreadAnalyzer(threading.Thread):
             self.send_packets_to_table()
             self.interface.update_table_ip_mac(self.latest_pack_to_send)
             self.interface.update_packet_table(self.latest_pack_to_send)
+            #self.interface.update_live_plot(self.latest_pack_to_send)
             self.send_alert()
 
 
