@@ -1,32 +1,141 @@
-"""Importa la libreria pandas e la rinomina come `pd`.
-pandas è una libreria Python usata per manipolare dati in formato tabellare (come fogli Excel o tabelle SQL):"""
-import pandas as pd
+import tkinter as tk
+from tkinter import ttk
+from collections import defaultdict, Counter
+import statistics
+import time
 
-#MAC address (sostituirlo con MAC address degli arduino):
-mac_addresses = ["00:1A:2B:3C:4D:5E", "11:22:33:44:55:66", "AA:BB:CC:DD:EE:FF"]
+class PacketTable:
+    def __init__(self, parent_frame):
+        self.tree = ttk.Treeview(
+            parent_frame,
+            columns=(
+                "second", "count", "tcp_udp", "protocols",
+                "bitrate"
+            ),
+            show="headings"
+        )
 
-#Simulazione dei dati (valori per secondo):
+        self.tree.heading("second", text="Second")
+        self.tree.heading("count", text="Frames")
+        self.tree.heading("tcp_udp", text="TCP/UDP (%)")
+        self.tree.heading("protocols", text="Protocols")
+        self.tree.heading("bitrate", text="Bit Rate (bps)")
 
-"""Crea un dizionario di dati simulati. Ogni chiave (es. MAC Address) rappresenta una colonna della tabella, 
-e il valore associato (una lista) rappresenta i dati delle righe. Ogni quartetta sotto riportata è comunque rappresentata come una colonna:"""
-data = {
-    "MAC Address": mac_addresses,
-    "Media dimensione pacchetti (byte/s)": [350, 420, 390],
-    "Pacchetti corrotti al secondo": [2, 0, 5],
-    "Pacchetti totali al secondo": [100, 120, 110]
-}
+        self.tree.column("second", width=80)
+        self.tree.column("count", width=60)
+        self.tree.column("tcp_udp", width=120)
+        self.tree.column("protocols", width=250)
+        self.tree.column("bitrate", width=120)
 
-#Creazione della tabella:
+        self.tree.pack(fill="both", expand=True)
 
-#Crea un DataFrame (tabella) da data. df è un oggetto tabellare simile a un foglio di calcolo, facile da manipolare e analizzare:
-df = pd.DataFrame(data)
+        self.after_id = None
+        self.second = 0
+        self.last_ts_rcv = 0
+        self.data = []
 
-#Calcolo della % di pacchetti corrotti, in formula:
-df["% pacchetti corrotti"] = (df["Pacchetti corrotti al secondo"] / df["Pacchetti totali al secondo"]) * 100
-"""Questa riga crea una nuova colonna nel DataFrame chiamata "% pacchetti corrotti" e ci inserisce la percentuale di pacchetti corrotti rispetto al 
-totale, per ogni riga della tabella."""
+        self.tree.bind("<Button-1>", self.on_click)
 
-#Visualizza la tabella:
 
-#Stampa a video della tabella:
-print(df)
+    def on_click(self, event):
+        region = self.tree.identify("region", event.x, event.y)
+        if region == "heading":
+            return
+
+        row_id = self.tree.identify_row(event.y)
+        if not row_id:
+            self.tree.selection_remove(self.tree.selection())
+            return "break"
+
+        selected = self.tree.selection()
+        if row_id in selected:
+            self.tree.selection_remove(row_id)
+            return "break"
+
+    def update_table(self,data):
+        print('vecchi dati')
+        print(len(self.data))
+        for i in self.data:
+            print(i)
+        print("--------")
+        self.data.extend(data)
+        print('nuovi dati')
+        print(len(self.data))
+        for i in self.data:
+            print(i)
+        print("---------")
+        protocol_list = []
+        tcp_count = 0
+        udp_count = 0
+        total_bytes = 0
+        count = 0
+        j = 0
+
+        self.last_ts_rcv = data[0]['timestamp']
+        '''print(len(data))
+        for i in data:
+            print(data)
+        print("")'''
+        for i, pkt in enumerate(self.data):
+            if pkt['timestamp'] - self.last_ts_rcv < 1:
+                if pkt['protocol'] == 'TCP':
+                    tcp_count += 1
+                if pkt['protocol'] == 'UDP':
+                    udp_count += 1
+                if pkt['protocol'] not in protocol_list:
+                    protocol_list.append(pkt['protocol'])
+                count = count + 1
+                total_bytes += pkt['size']
+                j = i
+            elif pkt['timestamp'] - self.last_ts_rcv >= 1:
+                break
+
+
+        print('cancello')
+        self.last_ts_rcv = self.data[j]['timestamp']
+
+
+
+        self.second = self.second + 1
+        total = tcp_count + udp_count
+        tcp_udp_str = f"{round(((tcp_count / total) * 100),2)}% / {round(100 - int((tcp_count / total) * 100),2)}%" if total > 0 else "0% / 0%"
+
+        # Verifica se l'ultima riga è visibile PRIMA di inserire una nuova riga
+        children = self.tree.get_children()
+        last_visible = False
+
+        if children:
+            last_item = children[-1]
+            bbox = self.tree.bbox(last_item)
+            if bbox:
+                y = bbox[1]
+                height = self.tree.winfo_height()
+                if y < height:
+                    last_visible = True
+
+        # Inserisce la nuova riga
+        item_id = self.tree.insert("", "end", values=(
+            self.second, count, tcp_udp_str, protocol_list,
+            total_bytes * 8
+
+        ))
+
+        if last_visible:
+            self.tree.see(item_id)
+
+        if j == 0:
+            del self.data[j]
+        else:
+            del self.data[:j+1]
+
+
+        '''# Limita a 100 secondi per evitare accumulo infinito
+        if len(self.displayed_seconds) > 100:
+            oldest = sorted(self.displayed_seconds)[:-100]
+            for old_sec in oldest:
+                self.displayed_seconds.remove(old_sec)
+                self.aggregated.pop(old_sec, None)
+
+        self.last_index += len(new_packets)'''
+
+        #print(f"[DEBUG] Update duration: {time.time() - t0:.2f} s")

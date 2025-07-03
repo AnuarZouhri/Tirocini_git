@@ -5,11 +5,13 @@ from os.path import getsize
 
 
 class Queue:
-    def __init__(self):
+    def __init__(self,max_age=10):
         self.queue = []
         self.lock = threading.Lock()
         self.condition = threading.Condition(self.lock)
-        self.reading = False
+        self.writing = True
+        self.max_age = max_age
+        self.last_ts_read = 0
 
 
     def insert(self, e):
@@ -27,34 +29,47 @@ class Queue:
     def getsize(self):
         return len(self.queue)
 
+    def remove_old_packets(self):
+        if not self.queue:
+            return
+
+
+        # Mantieni solo i pacchetti con timestamp >= threshold
+        self.queue = [pkt for pkt in self.queue if (self.queue[-1]['timestamp'] - pkt['timestamp'] <= self.max_age)]
+
     def produce(self, e):
         with self.condition:
-            # Aspetta finché il consumatore sta leggendo
-            while self.reading:
+            while not self.writing:
                 self.condition.wait()
+            # Inserisce pacchetti multipli o singoli
+            if isinstance(e, list):
+                for pkt in e:
+                    self.insert(pkt)
+            else:
+                self.insert(e)
 
-            self.insert(e)
-            #print(f"[PRODUTTORE] Prodotto: {e} (totale: {self.getsize()})")
 
-            # Notifica il consumatore se ci sono almeno 50 elementi
-            if self.getsize() >= 10:
+            # Rimuove pacchetti troppo vecchi
+            self.remove_old_packets()
+
+
+
+            if self.getsize() >= 1:
+                self.writing = False
                 self.condition.notify_all()
+
 
     def consume(self):
         with self.condition:
             # Aspetta che ci siano almeno 50 elementi
-            while self.getsize() < 10:
+            while self.writing:
                 self.condition.wait()
 
-            # Blocca il produttore
-            self.reading = True
-
             copy = self.deepcopy()
-            self.clear()
             #print("[CONSUMATORE] Fine consumo")
 
 
             # Sblocca il produttore
-            self.reading = False
+            self.writing = True
             self.condition.notify_all()
             return copy

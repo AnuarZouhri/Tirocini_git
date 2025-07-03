@@ -4,7 +4,7 @@ from matplotlib.figure import Figure
 
 class PieChartFrame(tk.Frame):
 
-    def __init__(self,master,title,data = None,**kwargs):
+    def __init__(self,master,title,legend,data = None,**kwargs):
         """
 
         Args:
@@ -14,13 +14,15 @@ class PieChartFrame(tk.Frame):
             **kwargs:
         """
         super().__init__(master,**kwargs)
+        self.data = []
+        self.legend = legend
 
         if data is None:
-            print(1)
+
             self.labels = []
             self.values = []
         else:
-            print(2)
+
             self.labels = list(data.keys())
             self.values = list(data.values())
 
@@ -49,7 +51,7 @@ class PieChartFrame(tk.Frame):
         self.ax.legend(
             wedges,
             self.labels,
-            title="MAC Address",
+            title=self.legend,
             loc='upper center',
             bbox_to_anchor=(0.7, 0.6),  # sotto al grafico
 
