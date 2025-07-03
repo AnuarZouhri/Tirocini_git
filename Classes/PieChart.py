@@ -27,7 +27,7 @@ class PieChartFrame(tk.Frame):
             self.values = list(data.values())
 
 
-        self.fig = Figure(figsize=(4, 4))
+        self.fig = Figure(figsize=(2, 2))
         self.ax = self.fig.add_subplot(111)
         self.ax.set_title(title)
         self.pie = None
