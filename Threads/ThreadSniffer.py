@@ -1,7 +1,7 @@
 import threading
-import subprocess
 import time
 import datetime
+import subprocess
 
 
 class ThreadSniffer(threading.Thread):
@@ -17,7 +17,8 @@ class ThreadSniffer(threading.Thread):
 
     def run(self):
         while True:
-            with subprocess.Popen("D:\\WiresharkAnalyzer\\scansione.bat", stdout=subprocess.PIPE,
+
+            with subprocess.Popen("C://Users//darka//PycharmProjects//Tirocini_git//file batch.bat", stdout=subprocess.PIPE,
                                   stderr=subprocess.DEVNULL, text=True) as proc:
 
                 packet_buffer = []

@@ -10,7 +10,7 @@ if __name__ == "__main__":
     root.title("Sniffer GUI")
     root.geometry("1300x750")
 
-    file_path = "Statistics/statistiche.txt"
+    file_path = "Threads/Statistics/statistiche.txt"
 
 
     if os.path.exists(file_path):

@@ -4,13 +4,22 @@ from time import sleep
 from threading import Thread
 import tkinter as tk
 from queue import Queue
+import os
+import subprocess
 
 
 packet_queue = Queue()
 
 def sniffing():
-    with subprocess.Popen("D:\\WiresharkAnalyzer\\scansione.bat",stdout=subprocess.PIPE,
-                     stderr=subprocess.DEVNULL, text=True) as proc:
+    # percorso assoluto della cartella principale
+    project_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # percorso al batch in sottocartella
+    bat_path = os.path.join(project_dir, "Threads", "scansione.bat")
+
+    with subprocess.Popen(bat_path, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True) as proc:
+        for line in proc.stdout:
+            print(line, end='')
                          print(1)
                          for line in proc.stdout:
                             print(2)
