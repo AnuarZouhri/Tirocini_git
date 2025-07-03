@@ -12,7 +12,7 @@ class DoSAlertTable(ttk.Frame):
     def __init__(self, parent: tk.Widget):
         super().__init__(parent)
 
-        title_label = ttk.Label(self, text="⚠ Attack Alerts", font=("Arial", 8, "bold"))
+        title_label = ttk.Label(self, text="⚠ Attack Alerts", font=("Arial", 10, "bold"))
         title_label.pack()
 
         self.tree = ttk.Treeview(self, columns=("Protocol", "Status"), show="headings", height=4)
