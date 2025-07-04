@@ -40,7 +40,11 @@ class DoSAlertTable(ttk.Frame):
 
 
     def add_alert(self, data):
-
+        try:
+            if not self.tree.winfo_exists():
+                return
+        except tk.TclError:
+            return
         self._active_alerts = data
 
         for proto in self._active_alerts:
@@ -51,10 +55,20 @@ class DoSAlertTable(ttk.Frame):
 
     def remove_alert(self, proto: str):
         #Rimuove un allarme esistente.
+        try:
+            if not self.tree.winfo_exists():
+                return
+        except tk.TclError:
+            return
         self.tree.delete(proto)
         self._active_alerts.remove(proto)
 
     def clear_all_alerts(self):
+        try:
+            if not self.tree.winfo_exists():
+                return
+        except tk.TclError:
+            return
         #Cancella tutte le allerte visibili.
         for proto in self._active_alerts:
             self.remove_alert(proto)

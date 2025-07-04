@@ -65,8 +65,12 @@ class IpMacTable:
         for i in data:
             print(data)
         print("")'''
-        if not self.tree.winfo_exists():
+        try:
+            if not self.tree.winfo_exists():
+                return
+        except tk.TclError:
             return
+
         for pkt in data:
 
             try:

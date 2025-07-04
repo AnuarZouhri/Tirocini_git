@@ -52,8 +52,6 @@ class Queue:
             # Rimuove pacchetti troppo vecchi
             self.remove_old_packets()
 
-
-
             if self.getsize() >= 1:
                 self.writing = False
                 self.condition.notify_all()

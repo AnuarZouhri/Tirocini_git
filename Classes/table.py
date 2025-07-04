@@ -53,6 +53,11 @@ class PacketTable:
             return "break"
 
     def update_table(self,data):
+        try:
+            if not self.tree.winfo_exists():
+                return
+        except tk.TclError:
+            return
         '''print('vecchi dati')
         print(len(self.data))
         for i in self.data:
@@ -96,7 +101,7 @@ class PacketTable:
 
         self.second = self.second + 1
         total = tcp_count + udp_count
-        tcp_udp_str = f"{round(((tcp_count / total) * 100),2)}% / {round(100 - int((tcp_count / total) * 100),2)}%" if total > 0 else "0% / 0%"
+        tcp_udp_str = f"{round(((tcp_count / total) * 100),2)}% / {round(100 - (tcp_count / total * 100),2)}%" if total > 0 else "0% / 0%"
 
         # Verifica se l'ultima riga è visibile PRIMA di inserire una nuova riga
         children = self.tree.get_children()

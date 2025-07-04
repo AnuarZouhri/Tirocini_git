@@ -21,8 +21,10 @@ class ThreadAnalyzer(threading.Thread):
         self.alarm_list = []
         self.alarm_log = {} #ad ogni chiave è associato il tempo in cui è finito l'allarme
         self.log_path = log_path
+        self.running = True
 
     def get_top_protocols_by_count(self, top_n=4):
+        print('get_top_protocols_by_count')
         protocol_counts = {}
 
         for pkt in self.packet_read:
@@ -48,6 +50,7 @@ class ThreadAnalyzer(threading.Thread):
         }
 
     def get_top_source_ipd_by_count(self, top_n=4):
+        print('get_top_source_ipd_by_count')
         ip_counts = {}
 
         for pkt in self.packet_read:
@@ -66,6 +69,7 @@ class ThreadAnalyzer(threading.Thread):
         self.interface.update_pie_chart(items,selected = 'IP dst distribution')
 
     def get_top_source_ips_by_count(self, top_n=4):
+        print('get_top_source_ips_by_count')
         ip_counts = {}
 
         for pkt in self.packet_read:
@@ -97,32 +101,12 @@ class ThreadAnalyzer(threading.Thread):
             writer.writerow([protocollo, descrizione, inizio, fine])
 
     def send_alert(self):
-        '''if self.alarm:
-            self.alarm_list = [
-                prot for prot in self.alarm_list
-                if prot in self.top_protocols
-                   and prot in self.prot_threshold
-                   and self.top_protocols[prot] >= self.prot_threshold[prot]
-            ]
-
-        for key in self.top_protocols:
-            if (
-                    key in self.prot_threshold and
-                    self.top_protocols[key] > self.prot_threshold[key] and
-                    key not in self.alarm_list
-            ):
-                self.alarm_list.append(key)
-
-        self.interface.update_alert_table(self.alarm_list)
-
-        self.alarm = bool(self.alarm_list)
-        '''
+        print('Send Alert')
         temp_alarm = self.alarm_list[:]
         if self.alarm:
             for prot in self.alarm_list:
                 flag = prot in self.top_protocols and prot in self.prot_threshold and self.top_protocols[prot] >= self.prot_threshold[prot]
-                print(flag)
-                print(temp_alarm)
+
                 if not flag:
                     print('devo scrivere nel file')
                     temp_alarm.remove(prot)
@@ -142,8 +126,11 @@ class ThreadAnalyzer(threading.Thread):
         self.alarm_list = temp_alarm
         self.alarm = bool(self.alarm_list)
 
+    def stop(self):
+        self.running = False
+
     def run(self):
-        while True:
+        while self.running:
             self.packet_read = self.queue.consume()
 
             self.get_top_protocols_by_count()
@@ -154,5 +141,7 @@ class ThreadAnalyzer(threading.Thread):
             self.interface.update_packet_table(self.latest_pack_to_send)
             #self.interface.update_live_plot(self.latest_pack_to_send)
             self.send_alert()
+            print('dormo per 3 secondi')
+            time.sleep(3)
 
 

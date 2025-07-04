@@ -10,14 +10,18 @@ class ThreadSniffer(threading.Thread):
         super().__init__()
         self.queue = queue
         self.file_path = file_path
+        self.running = True
+
+    def stop(self):
+        self.running = False
 
     def write_pkt(self,protocollo, dimensione):
         with open(self.file_path, 'a') as file:
-            print('scrittura su file')
+            print('ThreadS: write_pkt')
             file.write(f"{protocollo},{dimensione}\n")
 
     def run(self):
-        while True:
+        while self.running:
             #C://Users//darka//PycharmProjects//Tirocini_git//file batch.bat
             with subprocess.Popen("D:\\WiresharkAnalyzer\\scansione.bat", stdout=subprocess.PIPE,
                                   stderr=subprocess.DEVNULL, text=True) as proc:
@@ -26,6 +30,9 @@ class ThreadSniffer(threading.Thread):
                 start_time = time.time()
 
                 for line in proc.stdout:
+                    if not self.running:
+                        proc.terminate()  # Termina il processo batch
+                        break
 
 
                     if not line.strip():

@@ -33,6 +33,8 @@ class NetworkProtocolPlot:
         self.start_time = time.time()
 
 
+
+
     def update(self, data):
         widget = self.canvas.get_tk_widget()
 

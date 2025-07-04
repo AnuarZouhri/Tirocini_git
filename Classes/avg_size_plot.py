@@ -29,12 +29,12 @@ class LivePlot:
 
         self.x_data = []
         self.y_data = []
-
+        self.start_time = time.time()
         self.after_id = None
 
-        self.start_time = time.time()
 
-    def update(self,data):
+
+    '''def update(self,data):
         try:
             exists = self.canvas_widget.winfo_exists()
         except tk.TclError:
@@ -72,6 +72,14 @@ class LivePlot:
         max_y = max(self.y_data, default=0)
         self.ax.set_ylim(0, max(100, max_y * 1.2))
 
-        if self.canvas_widget.winfo_exists():
+        if exists:
             self.canvas.draw_idle()
+            '''
+
+    def destroy_plot(self):
+        if self.canvas:
+            self.canvas.get_tk_widget().destroy()
+            plt.close(self.fig)
+            self.canvas = None
+            self.fig = None
 
