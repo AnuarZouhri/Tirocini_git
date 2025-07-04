@@ -73,6 +73,7 @@ class PieChartFrame(tk.Frame):
         self.canvas.draw()
 """
 
+#il codice commentato sopra è quello realizzato prima del seguente:
 import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
@@ -80,7 +81,6 @@ from matplotlib.figure import Figure
 class PieChartFrame(tk.Frame):
 
     def __init__(self,master,title,legend,data = None,**kwargs):
-
 
         #Args:
             #master: radice tk a cui appartiene il grafico a torta
@@ -113,34 +113,36 @@ class PieChartFrame(tk.Frame):
 
     def drawPie(self):
         self.ax.clear()
+        self.ax.set_position([0.05, 0.1, 0.5, 0.8])  # posizione grafico
 
-        # Imposta dimensione grafico a torta più piccolo e spostato a sinistra
-        self.ax.set_position([0.05, 0.1, 0.5, 0.8])  # [left, bottom, width, height]
+        total = sum(self.values)
+
+        def autopct_custom(pct):
+            return f'{pct:.1f}%' if pct >= 10 else ''
 
         wedges, texts, autotexts = self.ax.pie(
             self.values,
             labels=None,
-            autopct=self.autopct,
+            autopct=autopct_custom,  # usa questa funzione per nascondere percentuali < 10%
             startangle=90,
-            textprops={'fontsize': 7}  # Dimensione testo interna
+            textprops={'fontsize': 7}
         )
 
         self.ax.axis('equal')
 
-        # Legenda a destra, centrata verticalmente
         self.ax.legend(
             wedges,
-            self.labels,
+            [f"{label} ({(value / total) * 100:.1f}%)" for label, value in zip(self.labels, self.values)],
             title=self.legend,
             loc='center left',
-            bbox_to_anchor=(0.85, 0.5),  # posizione fissa fuori dal grafico
-            bbox_transform=self.ax.transAxes,  # mantiene posizione fissa rispetto all'area axes
-            prop={'size': 8},
+            bbox_to_anchor=(0.9, 0.3),
+            bbox_transform=self.ax.transAxes,
+            prop={'size': 6},
             title_fontsize=9,
-            borderaxespad=0.0,
-            handlelength=1.5,
-            ncol=1,  # fissa il numero di colonne
-            frameon=True,  # mostra riquadro
+            handlelength=1,
+            ncol=1,
+            frameon=True,
+            #framealpha=0.3
         )
 
         self.ax.set_title(self.title, fontsize=10)
