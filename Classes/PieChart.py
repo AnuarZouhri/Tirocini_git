@@ -73,7 +73,7 @@ class PieChartFrame(tk.Frame):
         self.canvas.draw()
 """
 
-#il codice commentato sopra è quello realizzato prima del seguente:
+#il codice commentato sopra è quello realizzato giovedì, prima del seguente:
 import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
@@ -141,8 +141,7 @@ class PieChartFrame(tk.Frame):
             title_fontsize=9,
             handlelength=1,
             ncol=1,
-            frameon=True,
-            #framealpha=0.3
+            frameon=True
         )
 
         self.ax.set_title(self.title, fontsize=10)
