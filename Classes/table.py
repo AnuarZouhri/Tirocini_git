@@ -53,17 +53,17 @@ class PacketTable:
             return "break"
 
     def update_table(self,data):
-        print('vecchi dati')
+        '''print('vecchi dati')
         print(len(self.data))
         for i in self.data:
             print(i)
-        print("--------")
+        print("--------")'''
         self.data.extend(data)
-        print('nuovi dati')
+        '''print('nuovi dati')
         print(len(self.data))
         for i in self.data:
             print(i)
-        print("---------")
+        print("---------")'''
         protocol_list = []
         tcp_count = 0
         udp_count = 0
@@ -91,9 +91,7 @@ class PacketTable:
                 break
 
 
-        print('cancello')
         self.last_ts_rcv = self.data[j]['timestamp']
-
 
 
         self.second = self.second + 1
@@ -127,7 +125,6 @@ class PacketTable:
             del self.data[j]
         else:
             del self.data[:j+1]
-
 
         '''# Limita a 100 secondi per evitare accumulo infinito
         if len(self.displayed_seconds) > 100:

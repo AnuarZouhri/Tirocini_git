@@ -13,12 +13,13 @@ class ThreadSniffer(threading.Thread):
 
     def write_pkt(self,protocollo, dimensione):
         with open(self.file_path, 'a') as file:
+            print('scrittura su file')
             file.write(f"{protocollo},{dimensione}\n")
 
     def run(self):
         while True:
-
-            with subprocess.Popen("C://Users//darka//PycharmProjects//Tirocini_git//file batch.bat", stdout=subprocess.PIPE,
+            #C://Users//darka//PycharmProjects//Tirocini_git//file batch.bat
+            with subprocess.Popen("D:\\WiresharkAnalyzer\\scansione.bat", stdout=subprocess.PIPE,
                                   stderr=subprocess.DEVNULL, text=True) as proc:
 
                 packet_buffer = []

@@ -2,31 +2,52 @@ from Threads.ThreadSniffer import ThreadSniffer
 from Threads.ThreadAnalyzer import ThreadAnalyzer
 from Threads.Queue import Queue
 from Threads.Interfaccia import Interfaccia
+from Threads.Statistics.Statistics import generate_statistics
 import tkinter as tk
 import os
+import atexit
+import csv
+
+
+def ultimo_script():
+    generate_statistics(file_path)
+
 
 if __name__ == "__main__":
+
     root = tk.Tk()
     root.title("Sniffer GUI")
     root.geometry("1300x750")
 
-    file_path = "Threads/Statistics/statistiche.txt"
+    file_path = "Statistics/statistiche.txt"
+    #generate_statistics(file_path)
 
+    #os.makedirs(os.path.dirname(file_path), exist_ok=True)  # Crea la cartella se non esiste
 
     if os.path.exists(file_path):
         os.remove(file_path)
 
     with open(file_path, 'w') as file:
-        file.write("PROTOCOLLO,DIMENSIONE\n")
+        file.write("PROTOCOLLO,DIMENSIONEvghrtdfxc\n")
 
+    # Percorso file CSV
+    log_path = "Log/log_protocollo.csv"
+
+    # Crea il file con intestazioni se non esiste
+    if not os.path.exists(log_path):
+        with open(log_path, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(["Protocollo", "Descrizione", "Inizio", "Fine"])
 
     shared_queue = Queue()
     interface = Interfaccia(root)
     thread_sniffer = ThreadSniffer(shared_queue,file_path)
     thread_sniffer.daemon = True
-    thread_analyzer = ThreadAnalyzer(shared_queue,interface)
+    thread_analyzer = ThreadAnalyzer(shared_queue,interface,log_path)
     thread_analyzer.daemon = True
     thread_sniffer.start()
     thread_analyzer.start()
+    #atexit.register(ultimo_script)
 
     root.mainloop()
+
