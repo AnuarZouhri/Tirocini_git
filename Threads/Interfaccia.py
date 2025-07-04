@@ -58,13 +58,13 @@ class Interfaccia:
         pie_charts_frame.grid_columnconfigure(2, weight=1)
         pie_charts_frame.grid_rowconfigure(0, weight=1)
 
-        self.pie_chart1 = PieChartFrame(pie_charts_frame, 'packet per protocol', legend="protocols")
+        self.pie_chart1 = PieChartFrame(pie_charts_frame, 'Packets per Protocol', legend="Protocols")
         self.pie_chart1.grid(row=0, column=0, sticky='nsew', padx=2)
 
-        self.pie_chart2 = PieChartFrame(pie_charts_frame, 'IP source distribution', legend="IP source")
+        self.pie_chart2 = PieChartFrame(pie_charts_frame, 'IP Src Distribution', legend="IP Src")
         self.pie_chart2.grid(row=0, column=1, sticky='nsew', padx=2)
 
-        self.pie_chart3 = PieChartFrame(pie_charts_frame, 'IP dst distribution', legend="IP dst")
+        self.pie_chart3 = PieChartFrame(pie_charts_frame, 'IP Dst Distribution', legend="IP Dst")
         self.pie_chart3.grid(row=0, column=2, sticky='nsew', padx=2)
 
         # Contenitore tabella alert sotto i grafici
