@@ -1,85 +1,136 @@
-import matplotlib
-matplotlib.use("TkAgg")
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import time
 import tkinter as tk
 
-class LivePlot:
-    def __init__(self,parent_frame,interval=1000):
-
-        self.fig, self.ax = plt.subplots(figsize=(10, 3))
-        self.fig.tight_layout(pad=2.0)
-        self.fig.subplots_adjust(left=0.09, bottom=0.15)
-        self.interval = interval
-
-        self.line, = self.ax.plot([], [], '-o', color='orange', markersize=3, linewidth=2)
-
-        self.ax.set_title("Average Frame Size (bytes/s)")
-        self.ax.set_xlabel("Seconds")
-        self.ax.set_ylabel("Average Size (bytes)", fontsize=10, labelpad=2)
-        self.ax.grid(True)
-
-        self.ax.set_xlim(0, 100)
-        self.ax.set_ylim(0, 100)
-
-        self.canvas = FigureCanvasTkAgg(self.fig, master=parent_frame)
-        self.canvas_widget = self.canvas.get_tk_widget()
-        self.canvas_widget.pack(fill="both", expand=True, padx=0, pady=0)
-
-        self.x_data = []
-        self.y_data = []
-        self.start_time = time.time()
-        self.after_id = None
 
 
 
-    '''def update(self,data):
-        try:
-            exists = self.canvas_widget.winfo_exists()
-        except tk.TclError:
-            exists = False
+class LiveGraph:
+    def __init__(self,parent,width=700, height=325, max_points=60):
+        self.canvas = tk.Canvas(parent, bg='white')
+        self.canvas.pack(fill='both',expand=True)
 
-        if not exists:
+        self.point_spacing = 15
+        self.width, self.height = width, height
+        self.max_points = max_points
+        self.data = []
+        self.margin = 50  # spazio per assi e valori
+
+        self.time_counter = 1  # Numero di secondi trascorsi
+        self.time_labels = []  # Etichette da mostrare sotto l'asse X
+
+    def draw_axes(self):
+        # Linee assi X e Y
+        self.canvas.create_line(self.margin, self.margin,
+                                self.margin, self.height - self.margin, width=2)
+        self.canvas.create_line(self.margin, self.height - self.margin,
+                                self.width - self.margin, self.height - self.margin, width=2)
+        # Tacche asse X
+        num_points = len(self.data)
+        start_x = self.margin
+
+        for i in range(num_points):
+            x = start_x + i * self.point_spacing
+            if x > self.width - self.margin:
+                break
+
+            if i % 2 == 0:  # Tacche ogni 5 punti (puoi cambiare)
+                second_label = str(self.time_counter - num_points + i + 1)
+                self.canvas.create_line(x, self.height - self.margin, x, self.height - self.margin + 5, width=1)
+                self.canvas.create_text(x, self.height - self.margin + 15, text=second_label, anchor="n",
+                                        font=("Arial", 8))
+
+        # Calcolo sicuro dei valori sulle tacche Y
+        num_y_steps = 8
+        if self.data:
+            max_val = max(self.data)
+            min_val = min(self.data)
+        else:
+            max_val, min_val = 1, 0
+
+        range_val = (max_val - min_val) or 1  # evita divisione per zero
+        step_val = range_val / num_y_steps
+
+
+        for i in range(num_y_steps + 1):
+            y = self.height - self.margin - ((self.height - 2 * self.margin) * i / num_y_steps)
+            value = min_val + step_val * i
+            self.canvas.create_line(self.margin - 5, y, self.margin, y, width=1)
+            self.canvas.create_text(self.margin - 8, y, text=f"{value:.1f}", anchor="e", font=("Arial", 8))
+            self.canvas.create_line(self.margin, y, self.width - self.margin, y, fill="#e0e0e0", dash=(2, 2))
+
+    '''def draw_graph(self):
+        n = len(self.data)
+        if n < 2:
             return
-        buckets = {}
-        for pkt in data:
-            sec = int(float(pkt['timestamp']) - self.start_time)
-            size = pkt['size']
-            if size < 0:
-                continue
-            else:
-                buckets.setdefault(sec, []).append(size)
 
-        current_time = int(time.time() - self.start_time)
+        max_val = max(self.data)
+        min_val = min(self.data)
+        span = max_val - min_val or 1
 
-        window = 100
-        self.x_data = []
-        self.y_data = []
+        x_scale = (self.width - 2 * self.margin) / (self.max_points - 1)
+        y_scale = (self.height - 2 * self.margin) / span
 
-        start_sec = max(0, current_time - window + 1)
-        for sec in range(start_sec, current_time + 1):
-            sizes = buckets.get(sec, [])
-            avg_size = sum(sizes) / len(sizes) if sizes else 0
-            self.x_data.append(sec)
-            self.y_data.append(avg_size)
+        points = []
+        for i, val in enumerate(self.data):
+            x = self.margin + i * x_scale
+            y = self.height - self.margin - (val - min_val) * y_scale
+            points.append((x, y))
 
-        self.line.set_data(self.x_data, self.y_data)
+        # 🎨 Area sotto la curva
+        area_points = [(self.margin, self.height - self.margin)] + points + [(points[-1][0], self.height - self.margin)]
+        self.canvas.create_polygon(area_points, fill='lightblue', outline='', smooth=True)
 
-        self.ax.set_xlim(start_sec, current_time + 1)
-        self.ax.set_xticks(range(start_sec, current_time + 1, 5))
+        # 🔵 Linea principale
+        for (x1, y1), (x2, y2) in zip(points, points[1:]):
+            self.canvas.create_line(x1, y1, x2, y2, fill='blue', width=2)
 
-        max_y = max(self.y_data, default=0)
-        self.ax.set_ylim(0, max(100, max_y * 1.2))
+        # 🔴 Punti
+        for x, y in points:
+            self.canvas.create_oval(x - 3, y - 3, x + 3, y + 3, fill='red')
 
-        if exists:
-            self.canvas.draw_idle()
-            '''
+        '''
 
-    def destroy_plot(self):
-        if self.canvas:
-            self.canvas.get_tk_widget().destroy()
-            plt.close(self.fig)
-            self.canvas = None
-            self.fig = None
+    def draw_graph(self):
+        if len(self.data) < 2:
+            return
 
+        raw_max = max(self.data)
+        raw_min = min(self.data)
+        padding = 0.05 * (raw_max - raw_min or 1)
+
+        max_val = raw_max + padding
+        min_val = raw_min - padding
+        span = max_val - min_val
+        y_scale = (self.height - 2 * self.margin) / span
+
+        start_x = self.margin
+        pts = []
+
+        for i, val in enumerate(self.data):
+            x = start_x + i * self.point_spacing
+            y = self.height - self.margin - (val - min_val) * y_scale
+            pts.append((x, y))
+
+        # Disegna linee
+        for (x1, y1), (x2, y2) in zip(pts, pts[1:]):
+            self.canvas.create_line(x1, y1, x2, y2, fill='blue', width=2)
+        for x, y in pts:
+            self.canvas.create_oval(x - 3, y - 3, x + 3, y + 3, fill='red')
+
+    def update(self,new_data):
+        if not new_data:
+            return
+
+        avg = sum(pkt['size'] for pkt in new_data) / len(new_data)
+        self.data.append(avg)
+
+        # Calcola quanti punti stanno visivamente nel canvas
+        max_visible_points = (self.width - 2 * self.margin) // self.point_spacing
+        if len(self.data) > max_visible_points:
+            self.data.pop(0)
+
+        self.canvas.delete('all')
+        self.draw_axes()
+        self.draw_graph()
+        self.time_counter += 1
+
+        #self.canvas.after(500, self.update)

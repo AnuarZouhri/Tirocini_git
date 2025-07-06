@@ -52,7 +52,9 @@ class ThreadSniffer(threading.Thread):
                             "protocol": fields[3],
                             "MAC src": fields[4],
                             "size": int(fields[5]),
-                            "MAC dst": fields[6]
+                            "MAC dst": fields[6],
+                            "TCP portdst": fields[7],
+                            "UDP portdst": fields[8],
                         }
                         packet_buffer.append(pk)
                         self.write_pkt(pk['protocol'],pk['size'])

@@ -12,7 +12,8 @@ class PacketTable:
                 "second", "count", "tcp_udp", "protocols",
                 "bitrate"
             ),
-            show="headings"
+            show="headings",
+            height=7
         )
 
         self.tree.heading("second", text="Second")
@@ -21,11 +22,11 @@ class PacketTable:
         self.tree.heading("protocols", text="Protocols")
         self.tree.heading("bitrate", text="Bit Rate (bps)")
 
-        self.tree.column("second", width=80)
-        self.tree.column("count", width=60)
-        self.tree.column("tcp_udp", width=120)
-        self.tree.column("protocols", width=250)
-        self.tree.column("bitrate", width=120)
+        self.tree.column("second", width=70,stretch=False)
+        self.tree.column("count", width=70,stretch=False)
+        self.tree.column("tcp_udp", width=20)
+        self.tree.column("protocols", width=20)
+        self.tree.column("bitrate", width=95,stretch=False)
 
         self.tree.pack(fill="both", expand=True)
 

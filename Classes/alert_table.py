@@ -13,14 +13,14 @@ class DoSAlertTable(ttk.Frame):
         super().__init__(parent)
 
         title_label = ttk.Label(self, text="⚠ Attack Alerts", font=("Arial", 10, "bold"))
-        title_label.pack()
+        title_label.pack(anchor="w", pady=(0, 2))
 
-        self.tree = ttk.Treeview(self, columns=("Protocol", "Status"), show="headings", height=4)
+        self.tree = ttk.Treeview(self, columns=("Protocol", "Status"), show="headings", height=3)
         self.tree.heading("Protocol", text="Protocol")
         self.tree.heading("Status", text="Status")
         self.tree.column("Protocol", anchor="center", width=70)
-        self.tree.column("Status", anchor="center", width=280)
-        self.tree.pack(fill="both", expand=True, padx=10)
+        self.tree.column("Status", anchor="center", width=200)
+        self.tree.pack(fill="both", expand=True)
 
         self._start_times = {}  # Per memorizzare data/ora inizio alert
         

@@ -10,7 +10,7 @@ def dev_std(x):
     var = np.sum((x - np.mean(x)) ** 2) / (len(x) - 1)
     return np.sqrt(var)
 
-def generate_statistics(nome_file="statistiche"):
+def generate_statistics(nome_file="Threads/Statistics/statistiche.txt"):
     # Dizionario per raccogliere le dimensioni per ogni protocollo
     dati_per_protocollo = defaultdict(list)
 
@@ -43,7 +43,7 @@ def generate_statistics(nome_file="statistiche"):
 
 
     # Crea PDF
-    with PdfPages(f"Statistics/Analisi-Dati.pdf") as pdf:
+    with PdfPages(f"Threads/Statistics/Analisi-Dati.pdf") as pdf:
 
 
         fig = plt.figure(figsize=(12, 8))
@@ -91,7 +91,7 @@ def generate_statistics(nome_file="statistiche"):
         fig, ax = plt.subplots(figsize=(12, 8))
         fig.suptitle("Boxplot sulle dimensioni", fontsize=16)
 
-        ax.yaxis.set_major_locator(MultipleLocator(20))
+        ax.yaxis.set_major_locator(MultipleLocator(50))
         median_prop = dict(linewidth=3, color='red')
         ax.boxplot(dimensioni_all,medianprops=median_prop)
         ax.set_xlabel("Campioni")

@@ -14,7 +14,8 @@ class IpMacTable:
         self.tree = ttk.Treeview(
             parent_frame,
             columns=("ip_src", "mac_src", "ip_dst", "mac_dst", "count"),
-            show="headings"
+            show="headings",
+            height=7
         )
         self._setup_tree_columns()
 
@@ -34,11 +35,11 @@ class IpMacTable:
         self.tree.heading("mac_dst", text="MAC Destination")
         self.tree.heading("count", text="Packets", command=self._reset_group_by_ip)
 
-        self.tree.column("ip_src", width=120)
-        self.tree.column("mac_src", width=120)
-        self.tree.column("ip_dst", width=120)
-        self.tree.column("mac_dst", width=120)
-        self.tree.column("count", width=80, anchor='center')
+        self.tree.column("ip_src", width=20)
+        self.tree.column("mac_src", width=20)
+        self.tree.column("ip_dst", width=20)
+        self.tree.column("mac_dst", width=20)
+        self.tree.column("count", width=9, anchor='center')
 
     def _toggle_group_by_ip(self):
         self.group_by_ip_src = True

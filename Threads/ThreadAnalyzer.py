@@ -1,6 +1,7 @@
 import threading
 import time
 import csv
+import datetime
 
 class ThreadAnalyzer(threading.Thread):
     def __init__(self, queue, interface, log_path):
@@ -9,14 +10,17 @@ class ThreadAnalyzer(threading.Thread):
         self.interface = interface
         self.packet_read = []
 
+        #dati da passare ai diversi oggetti grafici
         self.last_timestamp_sent = 0
         self.top_protocols = {}
         self.top_source_ips = {}
         self.top_source_ipd = {}
         self.latest_pack_to_send = []
+
         self.prot_threshold = {'ARP' : 49,
                                'ICMP' : 29,
-                               'TCP':2}
+                               'TCP':50,
+                               'UDP':40}
         self.alarm = False
         self.alarm_list = []
         self.alarm_log = {} #ad ogni chiave è associato il tempo in cui è finito l'allarme
@@ -87,7 +91,7 @@ class ThreadAnalyzer(threading.Thread):
 
         self.interface.update_pie_chart(items,selected = 'IP source distribution')
 
-    def send_packets_to_table(self):
+    def new_packets(self):
         new_packets = [pkt for pkt in self.packet_read if pkt["timestamp"] > self.last_timestamp_sent]
 
         if new_packets:
@@ -95,10 +99,67 @@ class ThreadAnalyzer(threading.Thread):
             self.last_timestamp_sent = new_packets[-1]['timestamp']
             self.latest_pack_to_send = new_packets
 
-    def log_protocol_event(self,protocollo, descrizione, inizio, fine):
+    def packet_protocol_plot(self):
+        filtered_list = [
+            {"protocol": pkt["protocol"]}
+            for pkt in self.latest_pack_to_send
+            if "protocol" in pkt
+        ]
+
+        return filtered_list
+
+    def packet_avg_size_plot(self):
+        filtered_list = [
+            {"size": pkt["size"], 'protocol': pkt['protocol']}
+            for pkt in self.latest_pack_to_send
+            if "size" in pkt
+        ]
+
+        return filtered_list
+
+    def packet_table(self):
+        filtered_list = [
+            {"size": pkt["size"], 'protocol': pkt['protocol'], 'timestamp':pkt['timestamp']}
+            for pkt in self.latest_pack_to_send
+            if "size" in pkt and 'protocol' in pkt and 'timestamp' in pkt
+        ]
+
+        return filtered_list
+
+    def packet_ip_mac_table(self):
+        filtered_list = [
+            {"ip src": pkt["ip src"], 'ip dst': pkt['ip dst'], 'MAC dst':pkt['MAC dst'], 'MAC src':pkt['MAC src']}
+            for pkt in self.latest_pack_to_send
+            if "ip src" in pkt and 'ip dst' in pkt and 'MAC dst' in pkt and 'MAC src' in pkt
+        ]
+
+        return filtered_list
+
+    def packet_port_plot(self):
+        filtered_list = []
+
+        for pkt in self.latest_pack_to_send:
+
+            port = None
+            if pkt.get("TCP portdst"):
+                port = pkt["TCP portdst"]
+            elif pkt.get("UDP portdst"):
+                port = pkt["UDP portdst"]
+
+            if port:
+                filtered_list.append({
+                    "port dst": int(port)
+                })
+        return filtered_list
+
+    def log_protocol_event(self, protocollo, descrizione, inizio, fine):
+        # Conversione timestamp → stringa leggibile
+        inizio_str = datetime.datetime.fromtimestamp(inizio).strftime('%d/%m/%Y %H:%M:%S')
+        fine_str = datetime.datetime.fromtimestamp(fine).strftime('%d/%m/%Y %H:%M:%S')
+
         with open(self.log_path, mode='a', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow([protocollo, descrizione, inizio, fine])
+            writer.writerow([protocollo, descrizione, inizio_str, fine_str])
 
     def send_alert(self):
         print('Send Alert')
@@ -136,12 +197,11 @@ class ThreadAnalyzer(threading.Thread):
             self.get_top_protocols_by_count()
             self.get_top_source_ips_by_count()
             self.get_top_source_ipd_by_count()
-            self.send_packets_to_table()
-            self.interface.update_table_ip_mac(self.latest_pack_to_send)
-            self.interface.update_packet_table(self.latest_pack_to_send)
-            #self.interface.update_live_plot(self.latest_pack_to_send)
+            self.new_packets()
+            self.interface.update_table_ip_mac(self.packet_ip_mac_table())
+            self.interface.update_packet_table(self.packet_table())
+            self.interface.update_live_plot(self.packet_avg_size_plot())
+            self.interface.update_protocol_live_plot(self.packet_protocol_plot())
+            self.interface.update_port_plot(self.packet_port_plot())
             self.send_alert()
-            print('dormo per 3 secondi')
-            time.sleep(3)
-
-
+            print('ThreadA: Aggiornamento completato')
