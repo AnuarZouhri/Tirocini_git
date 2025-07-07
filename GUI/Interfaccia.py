@@ -127,8 +127,8 @@ class Interfaccia(tk.Frame):
             'IP dst distribution': self.pie_chart3
         }
 
-        combox_frame = tk.Frame(right_frame)
-        combox_frame.pack(side='top',padx=4)
+        combox_frame = tk.Frame(btn_frame)
+        combox_frame.pack(side='right',padx=4)
 
         # ComboBox sotto entrambi
         self.chart_selector = tk.ttk.Combobox(combox_frame, values=["IP Src", "IP Dst"], state="readonly")

@@ -80,6 +80,7 @@ class ProtocolLiveGraph:
         counter = defaultdict(int)
         new_protocols = []
 
+
         for pkt in data:
             proto = pkt['protocol']
             counter[proto] += 1
@@ -108,17 +109,25 @@ class ProtocolLiveGraph:
     def draw_graph(self):
         self.canvas.delete("all")
         proto = self.current_protocol.get()
+
+        # Assi
+        cw, ch, m = self.canvas_width, self.canvas_height, self.margin
+        self.canvas.create_line(m, m, m, ch - m, width=2)
+        self.canvas.create_line(m, ch - m, cw - m, ch - m, width=2)
+
+        # Titolo del grafico
+        self.canvas.create_text(cw // 2, m // 2, text=f"Packets per protocol: {proto}", font=("Arial", 14, "bold"))
+        # Etichetta asse Y
+        self.canvas.create_text(m // 2, ch // 2, text="Count Packets", angle=90, font=("Arial", 10, "bold"))
+        # Etichetta asse X
+        self.canvas.create_text(cw // 2, ch - m // 2 + 10, text="Seconds", font=("Arial", 10, "bold"))
+
         data = self.protocol_data[proto]
 
         vis_pts = (self.canvas_width - 2 * self.margin) // self.x_spacing
         start = max(0, len(data) - vis_pts - self.offset)
         end = len(data) - self.offset
         visible_data = data[start:end]
-
-        # Assi
-        cw, ch, m = self.canvas_width, self.canvas_height, self.margin
-        self.canvas.create_line(m, m, m, ch - m, width=2)
-        self.canvas.create_line(m, ch - m, cw - m, ch - m, width=2)
 
         if not visible_data:
             return

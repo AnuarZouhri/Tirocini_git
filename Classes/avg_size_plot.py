@@ -1,8 +1,5 @@
 import tkinter as tk
 
-
-
-
 class LiveGraph:
     def __init__(self,parent,width=700, height=325, max_points=60):
         self.canvas = tk.Canvas(parent, bg='white')
@@ -12,12 +9,27 @@ class LiveGraph:
         self.width, self.height = width, height
         self.max_points = max_points
         self.data = []
-        self.margin = 50  # spazio per assi e valori
+        self.margin = 70  # spazio per assi e valori
 
         self.time_counter = 1  # Numero di secondi trascorsi
         self.time_labels = []  # Etichette da mostrare sotto l'asse X
 
     def draw_axes(self):
+
+        # Titolo del grafico
+        self.canvas.create_text(self.width // 2, self.margin // 2,
+                                text="Average Packets Size",
+                                font=("Arial", 14, "bold"))
+
+        # Etichetta asse X
+        self.canvas.create_text(self.width // 2, self.height - self.margin // 2.5,
+                                text="Seconds", font=("Arial", 10, "bold"))
+
+        # Etichetta asse Y
+        self.canvas.create_text(self.margin // 4,self.height // 2,
+                                text="Average Byte", font=("Arial", 10, "bold"),
+                                angle=90)
+
         # Linee assi X e Y
         self.canvas.create_line(self.margin, self.margin,
                                 self.margin, self.height - self.margin, width=2)
