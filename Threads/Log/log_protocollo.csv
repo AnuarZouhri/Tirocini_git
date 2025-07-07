@@ -9,3 +9,13 @@ TCP,Possible ongoing attack: DoS (TCP flood),07/07/2025 11:07:00,07/07/2025 11:0
 TCP,Possible ongoing attack: DoS (TCP flood),07/07/2025 12:02:33,07/07/2025 12:02:53
 TCP,Possible ongoing attack: DoS (TCP flood),07/07/2025 12:07:48,07/07/2025 12:08:03
 ARP,Possible ongoing attack: DoS (ping flood),07/07/2025 12:08:03,07/07/2025 12:08:06
+ARP,Possible ongoing attack: DoS (ping flood),07/07/2025 13:36:28,07/07/2025 13:36:31
+ARP,Possible ongoing attack: DoS (ping flood),07/07/2025 13:36:59,07/07/2025 13:37:01
+TCP,Possible ongoing attack: DoS (TCP flood),07/07/2025 13:36:37,07/07/2025 13:37:14
+ARP,Possible ongoing attack: DoS (ping flood),07/07/2025 13:37:14,07/07/2025 13:37:19
+TCP,Possible ongoing attack: DoS (TCP flood),07/07/2025 13:37:15,07/07/2025 13:38:41
+TCP,Possible ongoing attack: DoS (TCP flood),07/07/2025 13:38:44,07/07/2025 13:38:55
+ARP,Possible ongoing attack: DoS (ping flood),07/07/2025 13:38:55,07/07/2025 13:38:58
+TCP,Possible ongoing attack: DoS (TCP flood),07/07/2025 13:38:58,07/07/2025 13:39:00
+TCP,Possible ongoing attack: DoS (TCP flood),07/07/2025 13:44:32,07/07/2025 13:44:42
+TCP,Possible ongoing attack: DoS (TCP flood),07/07/2025 14:29:12,07/07/2025 14:29:16
