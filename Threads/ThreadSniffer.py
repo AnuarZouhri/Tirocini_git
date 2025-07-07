@@ -6,11 +6,28 @@ import subprocess
 
 class ThreadSniffer(threading.Thread):
 
-    def __init__(self, queue,file_path):
+    def __init__(self, queue,file_path,interface="5"):
         super().__init__()
         self.queue = queue
         self.file_path = file_path
         self.running = True
+        self.command = [
+            "tshark",
+            "-i", interface,
+            "-l",  # Flush output line-by-line
+            "-T", "fields",
+            "-e", "ip.src",
+            "-e", "ip.dst",
+            "-e", "frame.time_epoch",
+            "-e", "_ws.col.Protocol",
+            "-e", "eth.src",
+            "-e", "frame.len",
+            "-e", "eth.dst",
+            "-e", "tcp.dstport",
+            "-e", "udp.dstport",
+
+            "-E", "separator=,"
+        ]
 
     def stop(self):
         self.running = False
@@ -23,7 +40,7 @@ class ThreadSniffer(threading.Thread):
     def run(self):
         while self.running:
             #C://Users//darka//PycharmProjects//Tirocini_git//file batch.bat
-            with subprocess.Popen("D:\\WiresharkAnalyzer\\scansione.bat", stdout=subprocess.PIPE,
+            with subprocess.Popen(self.command, stdout=subprocess.PIPE,
                                   stderr=subprocess.DEVNULL, text=True) as proc:
 
                 packet_buffer = []

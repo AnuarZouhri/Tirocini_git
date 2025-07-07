@@ -72,6 +72,11 @@ class ProtocolLiveGraph:
             self.draw_graph()
 
     def update_graph(self, data):
+        try:
+            if self.canvas.winfo_exists():
+                pass
+        except Exception as e:
+            return
         counter = defaultdict(int)
         new_protocols = []
 

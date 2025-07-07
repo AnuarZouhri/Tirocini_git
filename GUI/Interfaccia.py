@@ -8,11 +8,15 @@ from Classes.protocol_plot import ProtocolLiveGraph
 from Classes.port_plot import TopDestPortsGraph
 
 
-class Interfaccia:
+class Interfaccia(tk.Frame):
 
     def __init__(self, parent):
-        self.main_frame = parent
+        super().__init__(parent, bg="white")
+
+        self.main_frame = self
         self.graph_frames = {}
+        self.t_sniffer = None
+        self.t_analyzer = None
 
 
      # Suddivido l'interfaccia in due porzioni
@@ -29,13 +33,24 @@ class Interfaccia:
         right_frame = tk.Frame(self.main_frame, bg="white", padx=10, pady=10)
         right_frame.grid(row=0, column=1, sticky="nsew")
 
-        # Configura le righe
+        #configurazione frame sinistro
         left_frame.rowconfigure(0, weight=1)
         left_frame.rowconfigure(1, weight=1, uniform='group2')
         left_frame.rowconfigure(2, weight=1, uniform='group2')
         left_frame.columnconfigure(0, weight=1)  # per estensione orizzontale
 
-        # Frame per il grafico a torta in basso nella colonna sinistra
+        #configurazioni bottoni per interrompere la scansione e stampa dei dati
+        btn_frame = tk.Frame(left_frame)
+        btn_frame.grid(row=0, column=0, sticky="ew", columnspan=2)
+
+        btn_stop = tk.Button(btn_frame, text="Interrompi scansione", command=self.stop_threads)
+        btn_stop.pack(side="left", padx=5)
+
+        btn_export = tk.Button(btn_frame, text="Esporta Statistiche", command=self.export_stats)
+        btn_export.pack(side="left", padx=5)
+
+
+        # Frame per il plot delle porte in basso nella colonna sinistra
         port_plot_frame = tk.Frame(left_frame, bg='white')
         port_plot_frame.grid(row=2, column=0, sticky="nsew")
         port_plot_frame.rowconfigure(0, weight=1)
@@ -151,7 +166,7 @@ class Interfaccia:
     def update_alert_table(self, data):
         self.alert_table.clear_all_alerts()
         if data:
-            self.main_frame.after(1,self.alert_table.update,data)
+            self.main_frame.after(1,self.alert_table.add_alert,data)
             #self.alert_table.add_alert(data)
 
     def update_live_plot(self, data):
@@ -179,3 +194,18 @@ class Interfaccia:
         for name, frame in self.graph_frames.items():
             frame.grid_remove()  # Nasconde il frame (versione grid di pack_forget)
         self.graph_frames[selection].grid(row=0, column=0, sticky='nsew')  # O la posizione corretta nel contenitore
+
+    def set_threads(self,s,a):
+        self.t_sniffer = s
+        self.t_analyzer = a
+
+    def stop_threads(self):
+        if hasattr(self, 't_sniffer'):
+            self.t_sniffer.stop()
+        if hasattr(self, 't_analyzer'):
+            self.t_analyzer.stop()
+
+    def export_stats(self):
+        from Threads.Statistics.Statistics import generate_statistics
+        generate_statistics()
+        self.ip_mac_table.export_to_csv()

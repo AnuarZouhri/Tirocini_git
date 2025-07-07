@@ -57,39 +57,13 @@ class LiveGraph:
             self.canvas.create_text(self.margin - 8, y, text=f"{value:.1f}", anchor="e", font=("Arial", 8))
             self.canvas.create_line(self.margin, y, self.width - self.margin, y, fill="#e0e0e0", dash=(2, 2))
 
-    '''def draw_graph(self):
-        n = len(self.data)
-        if n < 2:
-            return
-
-        max_val = max(self.data)
-        min_val = min(self.data)
-        span = max_val - min_val or 1
-
-        x_scale = (self.width - 2 * self.margin) / (self.max_points - 1)
-        y_scale = (self.height - 2 * self.margin) / span
-
-        points = []
-        for i, val in enumerate(self.data):
-            x = self.margin + i * x_scale
-            y = self.height - self.margin - (val - min_val) * y_scale
-            points.append((x, y))
-
-        # 🎨 Area sotto la curva
-        area_points = [(self.margin, self.height - self.margin)] + points + [(points[-1][0], self.height - self.margin)]
-        self.canvas.create_polygon(area_points, fill='lightblue', outline='', smooth=True)
-
-        # 🔵 Linea principale
-        for (x1, y1), (x2, y2) in zip(points, points[1:]):
-            self.canvas.create_line(x1, y1, x2, y2, fill='blue', width=2)
-
-        # 🔴 Punti
-        for x, y in points:
-            self.canvas.create_oval(x - 3, y - 3, x + 3, y + 3, fill='red')
-
-        '''
 
     def draw_graph(self):
+        try:
+            if self.canvas.winfo_exists():
+                pass
+        except Exception as e:
+            return
         if len(self.data) < 2:
             return
 

@@ -22,7 +22,11 @@ class TopDestPortsGraph(tk.Frame):
 
 
     def update(self, data):
-        self.canvas.delete("all")
+        try:
+            if self.canvas.winfo_exists():
+                self.canvas.delete("all")
+        except Exception as e:
+            return
         for pkt in data:
             self.port_counts[pkt['port dst']] += 1
         # Titolo

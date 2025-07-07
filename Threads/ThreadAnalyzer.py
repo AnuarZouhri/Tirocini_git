@@ -4,7 +4,8 @@ import csv
 import datetime
 
 class ThreadAnalyzer(threading.Thread):
-    def __init__(self, queue, interface, log_path):
+    def __init__(self, queue, interface, log_path,threshold):
+
         super().__init__()
         self.queue = queue
         self.interface = interface
@@ -17,10 +18,11 @@ class ThreadAnalyzer(threading.Thread):
         self.top_source_ipd = {}
         self.latest_pack_to_send = []
 
-        self.prot_threshold = {'ARP' : 49,
-                               'ICMP' : 29,
-                               'TCP':50,
-                               'UDP':40}
+
+        self.prot_threshold = threshold
+
+        print(self.prot_threshold)
+
         self.alarm = False
         self.alarm_list = []
         self.alarm_log = {} #ad ogni chiave è associato il tempo in cui è finito l'allarme

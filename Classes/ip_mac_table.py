@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from collections import defaultdict
+import csv
 
 
 class IpMacTable:
@@ -89,7 +90,6 @@ class IpMacTable:
         selected_items = self.tree.selection()
         selected_values = self.tree.item(selected_items[0], "values") if selected_items else None
 
-        # ✅ CALCOLA visibilità dell’ultima riga PRIMA della cancellazione
         children = self.tree.get_children()
         last_visible = False
         if children:
@@ -144,4 +144,18 @@ class IpMacTable:
         if last_visible:
             self.tree.update_idletasks()
             self.tree.yview_moveto(1.0)
+
+    def export_to_csv(self, filename="Threads/Log/tabella_pacchetti.csv"):
+        try:
+            with open(filename, mode="w", newline="") as file:
+                writer = csv.writer(file, delimiter=';')
+                # Intestazioni colonna
+                writer.writerow(["IP Source", "MAC Source", "IP Destination", "MAC Destination", "Packets"])
+                # Scrive tutte le righe visibili nella tabella
+                for item_id in self.tree.get_children():
+                    values = self.tree.item(item_id, "values")
+                    writer.writerow(values)
+            print(f"Esportazione completata: {filename}")
+        except Exception as e:
+            print(f"Errore durante l'esportazione: {e}")
 
