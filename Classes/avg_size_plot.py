@@ -69,7 +69,6 @@ class LiveGraph:
             self.canvas.create_text(self.margin - 8, y, text=f"{value:.1f}", anchor="e", font=("Arial", 8))
             self.canvas.create_line(self.margin, y, self.width - self.margin, y, fill="#e0e0e0", dash=(2, 2))
 
-
     def draw_graph(self):
         try:
             if self.canvas.winfo_exists():
@@ -101,6 +100,7 @@ class LiveGraph:
             self.canvas.create_line(x1, y1, x2, y2, fill='blue', width=2)
         for x, y in pts:
             self.canvas.create_oval(x - 3, y - 3, x + 3, y + 3, fill='red')
+
 
     def update(self,new_data):
         if not new_data:
