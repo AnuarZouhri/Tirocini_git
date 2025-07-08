@@ -121,7 +121,7 @@ class ProtocolLiveGraph:
 
         # Titolo
         self.canvas.create_text(cw // 2, m // 2,
-                                text=f"Packets per protocol: {proto}",
+                                text=f"Packets per Protocol: {proto}",
                                 font=("Arial", 14, "bold"))
         # Etichette assi
         self.canvas.create_text(cw // 2, ch - m // 2.5,
