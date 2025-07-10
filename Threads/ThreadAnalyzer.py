@@ -4,7 +4,7 @@ import csv
 import datetime
 
 class ThreadAnalyzer(threading.Thread):
-    def __init__(self, queue, interface, log_path,threshold):
+    def __init__(self, queue, interface, log_path,threshold, ports, ips):
 
         super().__init__()
         self.queue = queue
@@ -20,8 +20,10 @@ class ThreadAnalyzer(threading.Thread):
 
 
         self.prot_threshold = threshold
+        self.ports = ports #porte da monitorare
+        self.ips = ips #indirizzi IP da monitorare
 
-        print(self.prot_threshold)
+        #print(self.prot_threshold)
 
         self.alarm = False
         self.alarm_list = []
@@ -47,12 +49,13 @@ class ThreadAnalyzer(threading.Thread):
         self.top_protocols = items
         self.interface.update_pie_chart(items,selected = 'packet per protocol')
 
-        self.PROTOCOL_MESSAGES = {
+        self.Messages = {
             "TCP": "Possible ongoing attack: DoS (TCP flood)",
             "UDP": "Possible ongoing attack: DoS (UDP flood)",
             "DNS": "Possible ongoing attack: DoS (DNS amplification)",
             "ICMP": "Possible ongoing attack: DoS (ping flood)",
-            "ARP": "Possible ongoing attack: DoS (ping flood)"
+            "ARP": "Possible ongoing attack: DoS (ping flood)",
+            "Port": "unexpected data received on the port",
         }
 
     def get_top_source_ipd_by_count(self, top_n=4):
@@ -99,7 +102,8 @@ class ThreadAnalyzer(threading.Thread):
         if new_packets:
             # aggiorna il valore massimo prima di inviare
             self.last_timestamp_sent = new_packets[-1]['timestamp']
-            self.latest_pack_to_send = new_packets
+
+        self.latest_pack_to_send = new_packets
 
     def packet_protocol_plot(self):
         filtered_list = [
@@ -154,26 +158,26 @@ class ThreadAnalyzer(threading.Thread):
                 })
         return filtered_list
 
-    def log_protocol_event(self, protocollo, descrizione, inizio, fine):
+    def write_log_protocol_event(self, descrizione, inizio, fine):
         # Conversione timestamp → stringa leggibile
         inizio_str = datetime.datetime.fromtimestamp(inizio).strftime('%d/%m/%Y %H:%M:%S')
         fine_str = datetime.datetime.fromtimestamp(fine).strftime('%d/%m/%Y %H:%M:%S')
 
         with open(self.log_path, mode='a', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow([protocollo, descrizione, inizio_str, fine_str])
+            writer = csv.writer(file, delimiter=';')
+            writer.writerow([descrizione, inizio_str, fine_str])
 
     def send_alert(self):
-        print('Send Alert')
+        #print('Send Alert')
         temp_alarm = self.alarm_list[:]
         if self.alarm:
             for prot in self.alarm_list:
                 flag = prot in self.top_protocols and prot in self.prot_threshold and self.top_protocols[prot] >= self.prot_threshold[prot]
 
                 if not flag:
-                    print('devo scrivere nel file')
+                    #print('devo scrivere nel file')
                     temp_alarm.remove(prot)
-                    self.log_protocol_event(prot,self.PROTOCOL_MESSAGES[prot],self.alarm_log[prot],time.time())
+                    self.write_log_protocol_event(self.Messages[prot], self.alarm_log[prot], time.time())
                     self.alarm_log.pop(prot,None)
 
         for key in self.top_protocols:
@@ -189,12 +193,44 @@ class ThreadAnalyzer(threading.Thread):
         self.alarm_list = temp_alarm
         self.alarm = bool(self.alarm_list)
 
+    def check_risky_port(self):
+        for pkt in self.latest_pack_to_send:
+            port = pkt.get('TCP portdst') or pkt.get('UDP portdst')
+            if not port:
+                continue
+
+            if port in self.ports:
+                print('SCRIVO NEL FILE')
+                message = self.Messages['Port'] + f" {port}"
+                self.write_log_protocol_event(
+                    message,
+                    time.time(),
+                    time.time()
+                )
+                #self.interface.show_notification(message)
+
+
+    def check_new_messages(self):
+        pass
+
+
+
     def stop(self):
         self.running = False
 
+        current_time = time.time()
+        for prot in self.alarm_list:
+            if prot in self.alarm_log:
+                start_time = self.alarm_log[prot]
+                self.write_log_protocol_event(
+                    self.Messages.get(prot, f"Alert for {prot}"),
+                    start_time,
+                    current_time
+                )
+
     def run(self):
         while self.running:
-            self.packet_read = self.queue.consume()
+            self.packet_read = self.queue.consume() #ottieni i nuovi dati
 
             self.get_top_protocols_by_count()
             self.get_top_source_ips_by_count()
@@ -205,5 +241,6 @@ class ThreadAnalyzer(threading.Thread):
             self.interface.update_live_plot(self.packet_avg_size_plot())
             self.interface.update_protocol_live_plot(self.packet_protocol_plot())
             self.interface.update_port_plot(self.packet_port_plot())
+            self.check_risky_port()
             self.send_alert()
-            print('ThreadA: Aggiornamento completato')
+            #print('ThreadA: Aggiornamento completato')

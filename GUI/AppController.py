@@ -13,7 +13,9 @@ import csv
 class AppController:
     def __init__(self, root):
         self.root = root
-        self.root.title("Sniffer GUI")
+        root.iconbitmap("Pictures/Logo.ico")
+        self.root.title("EASY SHARK")
+
         self.root.geometry("1900x1000")
         self.setted_values = {}
 
@@ -50,16 +52,16 @@ class AppController:
         if not os.path.exists(self.log_path):
             with open(self.log_path, mode='w', newline='') as file:
                 writer = csv.writer(file)
-                writer.writerow(["Protocollo", "Descrizione", "Inizio", "Fine"])
+                writer.writerow(["Descrizione", "Inizio", "Fine"])
 
     def show_frame(self, name):
         frame = self.frames[name]
         frame.tkraise()
 
-    def start_analysis(self,setted_values):
+    def start_analysis(self,setted_values, ports, ips):
         self.setted_values = setted_values
         self.thread_sniffer = ThreadSniffer(self.queue, self.file_path,interface=str(setted_values['interface']))
-        self.thread_analyzer = ThreadAnalyzer(self.queue, self.frames["Interfaccia"], self.log_path, dict(list(self.setted_values.items())[1:]))
+        self.thread_analyzer = ThreadAnalyzer(self.queue, self.frames["Interfaccia"], self.log_path, dict(list(self.setted_values.items())[1:]),ports, ips)
         self.frames["Interfaccia"].set_threads(self.thread_sniffer, self.thread_analyzer)
 
         self.thread_sniffer.daemon = True

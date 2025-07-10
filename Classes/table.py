@@ -3,6 +3,7 @@ from tkinter import ttk
 from collections import defaultdict, Counter
 import statistics
 import time
+import csv
 
 class PacketTable:
     def __init__(self, parent_frame):
@@ -59,17 +60,22 @@ class PacketTable:
                 return
         except tk.TclError:
             return
-        '''print('vecchi dati')
-        print(len(self.data))
-        for i in self.data:
-            print(i)
-        print("--------")'''
+
+        if not data:
+            self.second += 1
+            # Inserisci una riga con tutti 0 (e lista vuota per i protocolli)
+            item_id = self.tree.insert(
+                "", "end",
+                values=(self.second, 0, "0% / 0%", [], 0)
+            )
+            # Scorri se necessario
+            self.tree.see(item_id)
+            return
+
+
+
         self.data.extend(data)
-        '''print('nuovi dati')
-        print(len(self.data))
-        for i in self.data:
-            print(i)
-        print("---------")'''
+
         protocol_list = []
         tcp_count = 0
         udp_count = 0
@@ -78,10 +84,7 @@ class PacketTable:
         j = 0
 
         self.last_ts_rcv = data[0]['timestamp']
-        '''print(len(data))
-        for i in data:
-            print(data)
-        print("")'''
+
         for i, pkt in enumerate(self.data):
             if pkt['timestamp'] - self.last_ts_rcv < 1:
                 if pkt['protocol'] == 'TCP':
@@ -140,5 +143,19 @@ class PacketTable:
                 self.aggregated.pop(old_sec, None)
 
         self.last_index += len(new_packets)'''
+
+    def export_to_csv(self, filename):
+        try:
+            with open(filename, mode="w", newline="") as file:
+                writer = csv.writer(file, delimiter=';')
+                # Intestazioni colonna
+                writer.writerow(["Second", "Frames", "TCP/UDP (%)", "Protocols", "Bit rate (bps)"])
+                # Scrive tutte le righe visibili nella tabella
+                for item_id in self.tree.get_children():
+                    values = self.tree.item(item_id, "values")
+                    writer.writerow(values)
+            print(f"Esportazione completata: {filename}")
+        except Exception as e:
+            print(f"Errore durante l'esportazione: {e}")
 
         #print(f"[DEBUG] Update duration: {time.time() - t0:.2f} s")

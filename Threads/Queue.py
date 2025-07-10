@@ -53,8 +53,9 @@ class Queue:
             self.remove_old_packets()
 
             if self.getsize() >= 1:
-                self.writing = False
-                self.condition.notify_all()
+                pass
+            self.writing = False
+            self.condition.notify_all()
 
 
     def consume(self):

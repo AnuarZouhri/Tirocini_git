@@ -1,13 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
-import csv
-import os
-from datetime import datetime
+
 
 class DoSAlertTable(ttk.Frame):
-    
-    #Widget per la visualizzazione di allerte DoS basate sul protocollo rilevato.
-    
 
     def __init__(self, parent: tk.Widget):
         super().__init__(parent)
@@ -15,15 +10,13 @@ class DoSAlertTable(ttk.Frame):
         title_label = ttk.Label(self, text="⚠ Attack Alerts", font=("Arial", 10, "bold"))
         title_label.pack(anchor="w", pady=(0, 2))
 
-        self.tree = ttk.Treeview(self, columns=("Protocol", "Status"), show="headings", height=3)
-        self.tree.heading("Protocol", text="Protocol")
+        # Treeview con una sola colonna: "Status"
+        self.tree = ttk.Treeview(self, columns=("Status",), show="headings", height=3)
         self.tree.heading("Status", text="Status")
-        self.tree.column("Protocol", anchor="center", width=70)
-        self.tree.column("Status", anchor="center", width=200)
+        self.tree.column("Status", anchor="center", width=270)
         self.tree.pack(fill="both", expand=True)
 
-        self._start_times = {}  # Per memorizzare data/ora inizio alert
-        
+        self._start_times = {}
         style = ttk.Style()
         style.configure("Treeview", font=("Arial", 9), rowheight=25)
         style.configure("Treeview.Heading", font=("Arial", 9, "bold"))
@@ -35,9 +28,9 @@ class DoSAlertTable(ttk.Frame):
             "UDP": "Possible ongoing attack: DoS (UDP flood)",
             "DNS": "Possible ongoing attack: DoS (DNS amplification)",
             "ICMP": "Possible ongoing attack: DoS (ping flood)",
-            "ARP": "Possible ongoing attack: DoS (ping flood)"
+            "ARP": "Possible ongoing attack: DoS (ping flood)",
+            "Port": "unexpected data received on the port",
         }
-
 
     def add_alert(self, data):
         try:
@@ -48,13 +41,11 @@ class DoSAlertTable(ttk.Frame):
         self._active_alerts = data
 
         for proto in self._active_alerts:
-            if not self.tree.exists(proto):  # <-- controlla se l'iid esiste
+            if not self.tree.exists(proto):
                 status = self.PROTOCOL_MESSAGES[proto]
-                self.tree.insert("", "end", iid=proto, values=(proto, status))
-
+                self.tree.insert("", "end", iid=proto, values=(status,))
 
     def remove_alert(self, proto: str):
-        #Rimuove un allarme esistente.
         try:
             if not self.tree.winfo_exists():
                 return
@@ -69,6 +60,5 @@ class DoSAlertTable(ttk.Frame):
                 return
         except tk.TclError:
             return
-        #Cancella tutte le allerte visibili.
-        for proto in self._active_alerts:
+        for proto in self._active_alerts[:]:  # copia della lista per evitare modifica durante iterazione
             self.remove_alert(proto)

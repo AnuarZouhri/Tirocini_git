@@ -34,7 +34,7 @@ class ThreadSniffer(threading.Thread):
 
     def write_pkt(self,protocollo, dimensione):
         with open(self.file_path, 'a') as file:
-            print('ThreadS: write_pkt')
+            #print('ThreadS: write_pkt')
             file.write(f"{protocollo},{dimensione}\n")
 
     def run(self):
@@ -74,6 +74,7 @@ class ThreadSniffer(threading.Thread):
                             "UDP portdst": fields[8],
                         }
                         packet_buffer.append(pk)
+                        #print('TS: scansione')
                         self.write_pkt(pk['protocol'],pk['size'])
                     except Exception:
                         continue  # ignora righe malformate
@@ -85,3 +86,4 @@ class ThreadSniffer(threading.Thread):
                         self.queue.produce(packet_buffer)
                         packet_buffer = []
                         start_time = time.time()
+

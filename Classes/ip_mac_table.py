@@ -145,7 +145,7 @@ class IpMacTable:
             self.tree.update_idletasks()
             self.tree.yview_moveto(1.0)
 
-    def export_to_csv(self, filename="Threads/Log/tabella_pacchetti.csv"):
+    def export_to_csv(self, filename):
         try:
             with open(filename, mode="w", newline="") as file:
                 writer = csv.writer(file, delimiter=';')
