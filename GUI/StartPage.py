@@ -20,18 +20,27 @@ class StartPage(tk.Frame):
         container = tk.Frame(self, bg="#f2f2f2")
         container.pack(pady=10, padx=20)
 
-        # 🧷 Sezione Interfaccia
-        interfaccia_frame = ttk.LabelFrame(container, text="Interfaccia", padding=(20, 10))
-        interfaccia_frame.grid(row=0, column=0, sticky="ew", padx=10, pady=10)
+        container.grid_columnconfigure(0, weight=1)
+        container.grid_columnconfigure(1, weight=1)
 
-        ttk.Label(interfaccia_frame, text="N. Interfaccia:").grid(row=0, column=0, padx=10, pady=5, sticky='e')
+        # 🧷 Sezione Interfaccia (centrata con 3 colonne)
+        interfaccia_frame = ttk.LabelFrame(container, text="Interfaccia", padding=(20, 10))
+        interfaccia_frame.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+        # Configura 3 colonne per centraggio simmetrico
+        interfaccia_frame.grid_columnconfigure(0, weight=1)
+        interfaccia_frame.grid_columnconfigure(1, weight=0)
+        interfaccia_frame.grid_columnconfigure(2, weight=1)
+
+        # Etichetta e campo nella colonna centrale
+        ttk.Label(interfaccia_frame, text="N. Interfaccia:").grid(row=0, column=1, padx=10, pady=5, sticky='e')
         self.interface_entry = ttk.Entry(interfaccia_frame, width=25, validate='key')
         self.interface_entry['validatecommand'] = (self.interface_entry.register(self.validate_int), '%P')
-        self.interface_entry.grid(row=0, column=1, padx=10, pady=5, sticky='w')
+        self.interface_entry.grid(row=0, column=2, padx=10, pady=5, sticky='w')
 
         # 📊 Sezione soglie protocolli
         soglie_frame = ttk.LabelFrame(container, text="Impostazioni soglie critiche", padding=(20, 10))
-        soglie_frame.grid(row=1, column=0, sticky="ew", padx=10, pady=10)
+        soglie_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
 
         for i, nome in enumerate(self.protocolli):
             ttk.Label(soglie_frame, text=f"Soglia {nome}:").grid(row=i, column=0, padx=10, pady=5, sticky='e')
@@ -42,7 +51,7 @@ class StartPage(tk.Frame):
 
         # 👁 Sezione Monitoraggio
         monitor_frame = ttk.LabelFrame(container, text="Monitoraggio", padding=(20, 10))
-        monitor_frame.grid(row=2, column=0, sticky="ew", padx=10, pady=10)
+        monitor_frame.grid(row=1, column=1, sticky="nsew", padx=10, pady=10)
 
         ttk.Label(monitor_frame, text="Porta dst da monitorare:").grid(row=0, column=0, padx=10, pady=5, sticky='e')
         self.entry_porta = ttk.Entry(monitor_frame, width=25, validate='key')
@@ -54,7 +63,19 @@ class StartPage(tk.Frame):
         self.entry_ip.grid(row=1, column=1, padx=10, pady=5, sticky='w')
 
         # Pulsante Avanti
-        ttk.Button(self, text="Avanti", command=self.start).pack(pady=20)
+        ttk.Button(self, text="Avanti", command=self.start).pack(pady=(10, 5))
+
+        # Lista ordinata di tutti i campi input
+        self.all_entries = [
+            self.interface_entry,
+            *self.entries,  # TCP, UDP, ICMP, ARP
+            self.entry_porta,
+            self.entry_ip
+        ]
+
+        for idx, entry in enumerate(self.all_entries):
+            entry.bind("<Down>", lambda e, i=idx: self.focus_next(i))
+            entry.bind("<Up>", lambda e, i=idx: self.focus_prev(i))
 
     def validate_int(self, value):
         return value.isdigit() or value == ""
@@ -91,3 +112,11 @@ class StartPage(tk.Frame):
         self.setted_value = dict(zip(protocolli_full, valori_finali))
 
         self.controller.start_analysis(self.setted_value, self.ports_to_monitor, self.ip_to_monitor)
+
+    def focus_next(self, current_index):
+        if current_index < len(self.all_entries) - 1:
+            self.all_entries[current_index + 1].focus_set()
+
+    def focus_prev(self, current_index):
+        if current_index > 0:
+            self.all_entries[current_index - 1].focus_set()
