@@ -11,9 +11,11 @@ def dev_std(x):
     var = np.sum((x - np.mean(x)) ** 2) / (len(x) - 1)
     return sqrt(var)
 
-def generate_statistics(nome_file="Threads/Statistics/statistiche.txt",
+def generate_statistics(start_time,
+                        nome_file="Threads/Statistics/statistiche.txt",
                         output_dir="Threads/Statistics",
-                        nome_pdf="Analisi-Dati.pdf"):
+                        nome_pdf="Analisi-Dati.pdf",
+                        ):
     # Dizionario per raccogliere le dimensioni per ogni protocollo
     dati_per_protocollo = defaultdict(list)
 
@@ -37,7 +39,9 @@ def generate_statistics(nome_file="Threads/Statistics/statistiche.txt",
     for dim_list in dati.values():
         dimensioni_all.extend(dim_list)
 
-    data_stampa = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    inizio = datetime.fromtimestamp(start_time).strftime("%d/%m/%Y %H:%M:%S")
+    fine = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
 
     # Crea cartella output se non esiste
     if not os.path.exists(output_dir):
@@ -50,7 +54,8 @@ def generate_statistics(nome_file="Threads/Statistics/statistiche.txt",
 
         fig = plt.figure(figsize=(12, 8))
         fig.text(0.5, 0.85, "Analisi descrittiva dei pacchetti monitorati", fontsize=20, ha='center')
-        fig.text(0.5, 0.725, f"{data_stampa}", fontsize=15, ha='center')
+        fig.text(0.35, 0.725, f"Inizio scansione: {inizio}", fontsize=15, ha='center')
+        fig.text(0.75, 0.725, f"Fine scansione: {fine}", fontsize=15, ha='center')
         fig.text(0.1, 0.60, f"Totale pacchetti analizzati: {len(dimensioni_all)}", fontsize=14, ha='left')
         fig.text(0.1, 0.55, f"Dimensione media dei pacchetti: {round(np.mean(dimensioni_all),2)}", fontsize=14, ha='left')
         fig.text(0.1, 0.50, f"Mediana sulla dimensione dei pacchetti: {np.median(dimensioni_all)}", fontsize=14, ha='left')

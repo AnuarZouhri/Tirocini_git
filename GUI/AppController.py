@@ -6,7 +6,7 @@ from GUI.StartPage import StartPage
 from Threads.ThreadSniffer import ThreadSniffer
 from Threads.ThreadAnalyzer import ThreadAnalyzer
 from Threads.Queue import Queue
-from Threads.Statistics.Statistics import generate_statistics
+import time
 import os
 import csv
 
@@ -29,11 +29,12 @@ class AppController:
         self.log_path = "Threads/Log/log_protocollo.csv"
 
         self._init_files()
+        self.start_analyzing = time.time()
 
         # Crea le schermate
         self.frames = {}
         self.frames["StartPage"] = StartPage(self.container, self)
-        self.frames["Interfaccia"] = Interfaccia(self.container)
+        self.frames["Interfaccia"] = Interfaccia(self.container, self.start_analyzing)
 
         # Posiziona entrambi i frame nel container
         for frame in self.frames.values():

@@ -15,7 +15,7 @@ from GUI.NotificationPopUP import NotificationPopup
 
 class Interfaccia(tk.Frame):
 
-    def __init__(self, parent):
+    def __init__(self, parent, start_time):
         super().__init__(parent, bg="white")
 
         self.main_frame = self
@@ -23,6 +23,7 @@ class Interfaccia(tk.Frame):
         self.t_sniffer = None
         self.t_analyzer = None
         self.active_notifications = []
+        self.start_analyzing = start_time
 
 
      # Suddivido l'interfaccia in due porzioni
@@ -169,10 +170,10 @@ class Interfaccia(tk.Frame):
         self.main_frame.after(2,self.packet_table.update_table,data)
         #self.packet_table.update_table(data)
 
-    def update_alert_table(self, data):
-        self.alert_table.clear_all_alerts()
+    def update_alert_table(self, data, time):
+        #self.alert_table.clear_all_alerts()
         if data:
-            self.main_frame.after(1,self.alert_table.add_alert,data)
+            self.main_frame.after(1,self.alert_table.add_alert,data, time)
             #self.alert_table.add_alert(data)
 
     def update_live_plot(self, data):
@@ -210,20 +211,6 @@ class Interfaccia(tk.Frame):
             self.t_sniffer.stop()
         if hasattr(self, 't_analyzer'):
             self.t_analyzer.stop()
-    """
-    def export_stats(self):
-        from GUI.SetPath import SetPath
-
-        def on_directory_chosen(cartella_scelta):
-            from Threads.Statistics.Statistics import generate_statistics
-
-            percorso_file_statistiche = "Threads/Statistics/statistiche.txt"  # percorso fisso o dinamico del file dati
-
-            generate_statistics(nome_file=percorso_file_statistiche, output_dir=cartella_scelta)
-            print(f"PDF generato nella cartella: {cartella_scelta}")
-
-        SetPath(self, on_confirm_callback=on_directory_chosen)
-    """
 
     def export_stats(self):
         from GUI.SetPath import SetPath
@@ -253,51 +240,29 @@ class Interfaccia(tk.Frame):
             percorso_file_statistiche = "Threads/Statistics/statistiche.txt"
             path_ip_mac_table = os.path.join(cartella_scelta, "ip_mac_table.csv")
             path_packet_table = os.path.join(cartella_scelta, "packet_table.csv")
+
             generate_statistics(
                 nome_file=percorso_file_statistiche,
                 output_dir=cartella_scelta,
-                nome_pdf=nome_pdf
+                nome_pdf=nome_pdf,
+                start_time=self.start_analyzing
             )
+
             print(f"PDF generato nella cartella: {cartella_scelta} con nome: {nome_pdf}")
             self.ip_mac_table.export_to_csv(path_ip_mac_table)
             self.packet_table.export_to_csv(path_packet_table)
-            shutil.move("Threads/Log/log_protocollo.csv", cartella_scelta)
+
+            # 🔁 Rinomina log_protocollo.csv se esiste già
+            src_path = "Threads/Log/log_protocollo.csv"
+            dst_path = os.path.join(cartella_scelta, "log_protocollo.csv")
+
+            counter = 1
+            base, ext = os.path.splitext(dst_path)
+            while os.path.exists(dst_path):
+                dst_path = f"{base}_{counter}{ext}"
+                counter += 1
+
+            shutil.move(src_path, dst_path)
 
         SetPath(self, on_confirm_callback=on_directory_chosen)
 
-    def show_notification(self, message, duration=3000, type="warning"):
-        # Evita duplicati
-        for notif in self.active_notifications:
-            if notif.message == message:
-                return
-
-        # Massimo 3 notifiche
-        if len(self.active_notifications) >= 3:
-            oldest = self.active_notifications.pop(0)
-            oldest.destroy()
-
-        colors = {
-            "info": "#e1f5fe",
-            "success": "#d0f0c0",
-            "warning": "#fff3cd",
-            "error": "#f8d7da"
-        }
-        bg = colors.get(type, "#ffffcc")
-
-        popup = NotificationPopup(self, message, duration=duration, bg_color=bg)
-        popup.message = message
-        self.active_notifications.append(popup)
-
-        def cleanup():
-            if popup in self.active_notifications:
-                self.active_notifications.remove(popup)
-                popup.destroy()
-                self.reposition_notifications()
-
-        popup.after(duration, cleanup)
-        self.reposition_notifications()
-
-    def reposition_notifications(self):
-        for index, popup in enumerate(self.active_notifications):
-            y_offset = 80 + index * 60
-            popup.place_popup(self, y_offset)
