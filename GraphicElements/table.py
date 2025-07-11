@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from collections import defaultdict, Counter
 import statistics
-import time
+import datetime as datetime
 import csv
 
 class PacketTable:
@@ -10,24 +10,26 @@ class PacketTable:
         self.tree = ttk.Treeview(
             parent_frame,
             columns=(
-                "second", "count", "tcp_udp", "protocols",
-                "bitrate"
+                "Id scansione", "count", "tcp_udp", "protocols",
+                "bitrate", "Time"
             ),
             show="headings",
             height=7
         )
 
-        self.tree.heading("second", text="Second")
+        self.tree.heading("Id scansione", text="Id scansione")
         self.tree.heading("count", text="Frames")
         self.tree.heading("tcp_udp", text="TCP/UDP (%)")
         self.tree.heading("protocols", text="Protocols")
         self.tree.heading("bitrate", text="Bit Rate (bps)")
+        self.tree.heading("Time", text="Time")
 
-        self.tree.column("second", width=70,stretch=False)
+        self.tree.column("Id scansione", width=70,stretch=False)
         self.tree.column("count", width=70,stretch=False)
         self.tree.column("tcp_udp", width=20)
         self.tree.column("protocols", width=20)
         self.tree.column("bitrate", width=95,stretch=False)
+        self.tree.column("Time", width=95)
 
         self.tree.pack(fill="both", expand=True)
 
@@ -54,7 +56,87 @@ class PacketTable:
             self.tree.selection_remove(row_id)
             return "break"
 
-    def update_table(self,data):
+    def update_table(self, data):
+        try:
+            if not self.tree.winfo_exists():
+                return
+        except tk.TclError:
+            return
+
+        if not data:
+            self.second += 1
+            item_id = self.tree.insert(
+                "", "end",
+                values=(self.second, 0, "0% / 0%", [], 0, "")
+            )
+            self.tree.see(item_id)
+            return
+
+        self.data.extend(data)
+
+        protocol_list = []
+        tcp_count = 0
+        udp_count = 0
+        total_bytes = 0
+        count = 0
+        j = 0
+
+        # Timestamp di riferimento per la finestra di 1 secondo
+        start_ts = self.data[0]['timestamp']
+
+        for i, pkt in enumerate(self.data):
+            if pkt['timestamp'] - start_ts < 1:
+                if pkt['protocol'] == 'TCP':
+                    tcp_count += 1
+                if pkt['protocol'] == 'UDP':
+                    udp_count += 1
+                if pkt['protocol'] not in protocol_list:
+                    protocol_list.append(pkt['protocol'])
+                count += 1
+                total_bytes += pkt['size']
+                j = i
+            else:
+                break
+
+        self.last_ts_rcv = self.data[j]['timestamp']
+        self.second += 1
+        total = tcp_count + udp_count
+        tcp_udp_str = (
+            f"{round((tcp_count / total) * 100, 2)}% / {round(100 - (tcp_count / total * 100), 2)}%"
+            if total > 0 else "0% / 0%"
+        )
+
+        # Verifica se l'ultima riga è visibile
+        children = self.tree.get_children()
+        last_visible = False
+        if children:
+            last_item = children[-1]
+            bbox = self.tree.bbox(last_item)
+            if bbox:
+                y = bbox[1]
+                height = self.tree.winfo_height()
+                if y < height:
+                    last_visible = True
+
+        # Timestamp formattato con millisecondi
+        dt = datetime.datetime.fromtimestamp(start_ts)
+        formatted = dt.strftime('%d/%m/%Y %H:%M:%S') + f".{int(dt.microsecond / 1000):03d}"
+
+        item_id = self.tree.insert(
+            "", "end",
+            values=(self.second, count, tcp_udp_str, protocol_list, total_bytes * 8, formatted)
+        )
+
+        if last_visible:
+            self.tree.see(item_id)
+
+        # Rimuovi i pacchetti già processati
+        if j == 0:
+            del self.data[0]
+        else:
+            del self.data[:j + 1]
+
+    '''def update_table(self,data):
         try:
             if not self.tree.winfo_exists():
                 return
@@ -83,6 +165,7 @@ class PacketTable:
         count = 0
         j = 0
 
+        time_to_scan = data[0]['timestamp']
         self.last_ts_rcv = data[0]['timestamp']
 
         for i, pkt in enumerate(self.data):
@@ -100,7 +183,7 @@ class PacketTable:
                 break
 
 
-        self.last_ts_rcv = self.data[j]['timestamp']
+        self.last_ts_rcv = self.data[j]['timestamp'] #ultimo timestamp ricevuto
 
 
         self.second = self.second + 1
@@ -120,10 +203,13 @@ class PacketTable:
                 if y < height:
                     last_visible = True
 
+        dt = datetime.datetime.fromtimestamp(time_to_scan)
+        formatted = dt.strftime('%d/%m/%Y %H:%M:%S') + f".{int(dt.microsecond / 1000):03d}"
+
         # Inserisce la nuova riga
         item_id = self.tree.insert("", "end", values=(
             self.second, count, tcp_udp_str, protocol_list,
-            total_bytes * 8
+            total_bytes * 8, formatted
 
         ))
 
@@ -133,16 +219,9 @@ class PacketTable:
         if j == 0:
             del self.data[j]
         else:
-            del self.data[:j+1]
-
-        '''# Limita a 100 secondi per evitare accumulo infinito
-        if len(self.displayed_seconds) > 100:
-            oldest = sorted(self.displayed_seconds)[:-100]
-            for old_sec in oldest:
-                self.displayed_seconds.remove(old_sec)
-                self.aggregated.pop(old_sec, None)
-
-        self.last_index += len(new_packets)'''
+            del self.data[:j]
+            
+    '''
 
     def export_to_csv(self, filename):
         try:

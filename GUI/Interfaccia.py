@@ -1,11 +1,11 @@
 
-from Classes.pie_chart import PieChartFrame
-from Classes.ip_mac_table import IpMacTable
-from Classes.table import PacketTable
-from Classes.alert_table import DoSAlertTable
-from Classes.avg_size_plot import LiveGraph
-from Classes.protocol_plot import ProtocolLiveGraph
-from Classes.port_plot import TopDestPortsGraph
+from GraphicElements.pie_chart import PieChartFrame
+from GraphicElements.ip_mac_table import IpMacTable
+from GraphicElements.table import PacketTable
+from GraphicElements.alert_table import DoSAlertTable
+from GraphicElements.avg_size_plot import LiveGraph
+from GraphicElements.protocol_plot import ProtocolLiveGraph
+from GraphicElements.port_plot import TopDestPortsGraph
 import os
 import tkinter as tk
 from tkinter import simpledialog, messagebox

@@ -25,7 +25,7 @@ class ProtocolLiveGraph:
         # Dati per protocollo
         self.protocol_data = defaultdict(list)
         self.current_protocol = tk.StringVar()
-        self.protocols = ['IP']
+        self.protocols = ['TCP']
         self.current_protocol.set(self.protocols[0])
         self.offset = 0  # Posizione di scroll
         self.protocol_timestamps = defaultdict(list)

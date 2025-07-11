@@ -30,6 +30,7 @@ class ThreadSniffer(threading.Thread):
             "-E", "separator=,"
         ]
         self.ip_to_monitor = ip_to_monitor
+        self.id = 0
 
     def stop(self):
         self.running = False
@@ -40,56 +41,58 @@ class ThreadSniffer(threading.Thread):
             file.write(f"{protocollo},{dimensione}\n")
 
     def run(self):
-        while self.running:
-            #C://Users//darka//PycharmProjects//Tirocini_git//file batch.bat
-            with subprocess.Popen(self.command, stdout=subprocess.PIPE,
-                                  stderr=subprocess.DEVNULL, text=True) as proc:
+        with subprocess.Popen(self.command, stdout=subprocess.PIPE,
+                              stderr=subprocess.DEVNULL, text=True) as proc:
 
-                packet_buffer = []
-                start_time = time.time()
+            packet_buffer = []
+            reference_ts = None
 
-                for line in proc.stdout:
-                    if not self.running:
-                        proc.terminate()  # Termina il processo batch
-                        break
+            for line in proc.stdout:
+                if not self.running:
+                    proc.terminate()
+                    break
 
+                if not line.strip():
+                    continue
 
-                    if not line.strip():
-                        continue
+                fields = line.strip().split(',')
+                if len(fields) < 4 or fields[3] == "Realtek":
+                    continue
 
-                    fields = line.strip().split(',')
-                    if len(fields) < 4 or fields[3] == "Realtek":
-                        continue  # ignora righe non valide
+                try:
+                    epoch_time = float(fields[2])
+                    pk = {
+                        "ip src": fields[0],
+                        "ip dst": fields[1],
+                        "timestamp": epoch_time,
+                        "protocol": fields[3],
+                        "MAC src": fields[4],
+                        "size": int(fields[5]),
+                        "MAC dst": fields[6],
+                        "TCP portdst": fields[7],
+                        "UDP portdst": fields[8],
+                    }
 
-                    try:
-                        epoch_time = float(fields[2])
+                    if pk["ip src"] in self.ip_to_monitor:
+                        pk["data"] = fields[9]
+                    print(pk)
+                    print("\n")
 
-                        pk = {
-                            "ip src": fields[0],
-                            "ip dst": fields[1],
-                            "timestamp": epoch_time,
-                            "protocol": fields[3],
-                            "MAC src": fields[4],
-                            "size": int(fields[5]),
-                            "MAC dst": fields[6],
-                            "TCP portdst": fields[7],
-                            "UDP portdst": fields[8],
-                        }
-                        if pk["ip src"] in self.ip_to_monitor:
-                            pk["data"] = fields[9]
+                    # Primo pacchetto ricevuto → imposta il riferimento
+                    if reference_ts is None:
+                        reference_ts = epoch_time
 
-
+                    # Se entro 1 secondo → accumula
+                    if epoch_time - reference_ts < 1:
                         packet_buffer.append(pk)
-                        #print('TS: scansione')
-                        self.write_pkt(pk['protocol'],pk['size'])
-                    except Exception:
-                        continue  # ignora righe malformate
-
-                    # Se è passato 1 secondo, invia i pacchetti raccolti
-                    if time.time() - start_time >= 1:
-                        #packet_buffer.sort(key=lambda pkt: pkt['timestamp'])
-
+                        self.write_pkt(pk['protocol'], pk['size'])
+                    else:
+                        # Superato 1 secondo → invia buffer e riparti
                         self.queue.produce(packet_buffer)
-                        packet_buffer = []
-                        start_time = time.time()
-
+                        packet_buffer = [pk]  # questo pacchetto diventa il primo del nuovo blocco
+                        reference_ts = epoch_time
+                        self.write_pkt(pk['protocol'], pk['size'])
+                        print(self.id)
+                        self.id += 1
+                except Exception:
+                    continue
