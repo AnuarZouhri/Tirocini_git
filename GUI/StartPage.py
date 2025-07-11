@@ -24,7 +24,7 @@ class StartPage(tk.Frame):
         container.grid_columnconfigure(1, weight=1)
 
         # 🧷 Sezione Interfaccia (centrata con 3 colonne)
-        interfaccia_frame = ttk.LabelFrame(container, text="Interfaccia", padding=(20, 10))
+        interfaccia_frame = ttk.LabelFrame(container, text="Interface", padding=(20, 10))
         interfaccia_frame.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
         # Configura 3 colonne per centraggio simmetrico
@@ -33,37 +33,37 @@ class StartPage(tk.Frame):
         interfaccia_frame.grid_columnconfigure(2, weight=1)
 
         # Etichetta e campo nella colonna centrale
-        ttk.Label(interfaccia_frame, text="N. Interfaccia:").grid(row=0, column=1, padx=10, pady=5, sticky='e')
+        ttk.Label(interfaccia_frame, text="Interface number:").grid(row=0, column=1, padx=10, pady=5, sticky='e')
         self.interface_entry = ttk.Entry(interfaccia_frame, width=25, validate='key')
         self.interface_entry['validatecommand'] = (self.interface_entry.register(self.validate_int), '%P')
         self.interface_entry.grid(row=0, column=2, padx=10, pady=5, sticky='w')
 
         # 📊 Sezione soglie protocolli
-        soglie_frame = ttk.LabelFrame(container, text="Impostazioni soglie critiche", padding=(20, 10))
+        soglie_frame = ttk.LabelFrame(container, text="Critical threshold settings", padding=(20, 10))
         soglie_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
 
         for i, nome in enumerate(self.protocolli):
-            ttk.Label(soglie_frame, text=f"Soglia {nome}:").grid(row=i, column=0, padx=10, pady=5, sticky='e')
+            ttk.Label(soglie_frame, text=f"Theshold {nome}:").grid(row=i, column=0, padx=10, pady=5, sticky='e')
             entry = ttk.Entry(soglie_frame, width=25, validate='key')
             entry['validatecommand'] = (entry.register(self.validate_int), '%P')
             entry.grid(row=i, column=1, padx=10, pady=5, sticky='w')
             self.entries.append(entry)
 
         # 👁 Sezione Monitoraggio
-        monitor_frame = ttk.LabelFrame(container, text="Monitoraggio", padding=(20, 10))
+        monitor_frame = ttk.LabelFrame(container, text="Monitoring", padding=(20, 10))
         monitor_frame.grid(row=1, column=1, sticky="nsew", padx=10, pady=10)
 
-        ttk.Label(monitor_frame, text="Porta dst da monitorare:").grid(row=0, column=0, padx=10, pady=5, sticky='e')
+        ttk.Label(monitor_frame, text="Dst port to monitor:").grid(row=0, column=0, padx=10, pady=5, sticky='e')
         self.entry_porta = ttk.Entry(monitor_frame, width=25, validate='key')
         self.entry_porta['validatecommand'] = (self.entry_porta.register(self.validate_int), '%P')
         self.entry_porta.grid(row=0, column=1, padx=10, pady=5, sticky='w')
 
-        ttk.Label(monitor_frame, text="Indirizzo IP per notifiche:").grid(row=1, column=0, padx=10, pady=5, sticky='e')
+        ttk.Label(monitor_frame, text="IP address for notifications:").grid(row=1, column=0, padx=10, pady=5, sticky='e')
         self.entry_ip = ttk.Entry(monitor_frame, width=25)
         self.entry_ip.grid(row=1, column=1, padx=10, pady=5, sticky='w')
 
         # Pulsante Avanti
-        ttk.Button(self, text="Avanti", command=self.start).pack(pady=(10, 5))
+        ttk.Button(self, text="Start scanning", command=self.start).pack(pady=(10, 5))
 
         # Lista ordinata di tutti i campi input
         self.all_entries = [
@@ -93,7 +93,7 @@ class StartPage(tk.Frame):
 
         if ip:
             if not self.validate_ip(ip):
-                messagebox.showerror("Errore", "Indirizzo IP non valido.")
+                messagebox.showerror("Error", "Invalid IP address.")
                 return
             else:
                 self.ip_to_monitor.append(ip)

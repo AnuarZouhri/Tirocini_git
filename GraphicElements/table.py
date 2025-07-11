@@ -10,26 +10,26 @@ class PacketTable:
         self.tree = ttk.Treeview(
             parent_frame,
             columns=(
-                "Id scansione", "count", "tcp_udp", "protocols",
-                "bitrate", "Time"
+                "scan id", "count", "tcp_udp", "protocols",
+                "bitrate", "time"
             ),
             show="headings",
             height=7
         )
 
-        self.tree.heading("Id scansione", text="Id scansione")
+        self.tree.heading("scan id", text="Scan Id")
         self.tree.heading("count", text="Frames")
         self.tree.heading("tcp_udp", text="TCP/UDP (%)")
         self.tree.heading("protocols", text="Protocols")
         self.tree.heading("bitrate", text="Bit Rate (bps)")
-        self.tree.heading("Time", text="Time")
+        self.tree.heading("time", text="Time")
 
-        self.tree.column("Id scansione", width=85,stretch=False)
+        self.tree.column("scan id", width=85,stretch=False)
         self.tree.column("count", width=70,stretch=False)
         self.tree.column("tcp_udp", width=20)
         self.tree.column("protocols", width=20)
         self.tree.column("bitrate", width=95,stretch=False)
-        self.tree.column("Time", width=150,stretch=False)
+        self.tree.column("time", width=150,stretch=False)
 
         self.tree.pack(fill="both", expand=True)
 
@@ -143,13 +143,13 @@ class PacketTable:
             with open(filename, mode="w", newline="") as file:
                 writer = csv.writer(file, delimiter=';')
                 # Intestazioni colonna
-                writer.writerow(["Id scansione", "Frames", "TCP/UDP (%)", "Protocols", "Bit rate (bps)", "Time"])
+                writer.writerow(["Scan Id", "Frames", "TCP/UDP (%)", "Protocols", "Bit rate (bps)", "Time"])
                 # Scrive tutte le righe visibili nella tabella
                 for item_id in self.tree.get_children():
                     values = self.tree.item(item_id, "values")
                     writer.writerow(values)
-            print(f"Esportazione completata: {filename}")
+            print(f"Export completed: {filename}")
         except Exception as e:
-            print(f"Errore durante l'esportazione: {e}")
+            print(f"Error while exporting: {e}")
 
         #print(f"[DEBUG] Update duration: {time.time() - t0:.2f} s")
