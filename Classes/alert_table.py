@@ -11,7 +11,7 @@ class DoSAlertTable(ttk.Frame):
         title_label.pack(anchor="w", pady=(0, 2))
 
         # Treeview con una sola colonna: "Status"
-        self.tree = ttk.Treeview(self, columns=("Status",), show="headings", height=3)
+        self.tree = ttk.Treeview(self, columns=("Status",), show="headings", height=4)
         self.tree.heading("Status", text="Status")
         self.tree.column("Status", anchor="center", width=270)
         self.tree.pack(fill="both", expand=True)

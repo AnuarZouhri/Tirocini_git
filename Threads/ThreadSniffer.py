@@ -6,7 +6,7 @@ import subprocess
 
 class ThreadSniffer(threading.Thread):
 
-    def __init__(self, queue,file_path,interface="5"):
+    def __init__(self, queue,file_path,ip_to_monitor,interface="5"):
         super().__init__()
         self.queue = queue
         self.file_path = file_path
@@ -25,9 +25,11 @@ class ThreadSniffer(threading.Thread):
             "-e", "eth.dst",
             "-e", "tcp.dstport",
             "-e", "udp.dstport",
+            "-e", "data.data",
 
             "-E", "separator=,"
         ]
+        self.ip_to_monitor = ip_to_monitor
 
     def stop(self):
         self.running = False
@@ -73,6 +75,10 @@ class ThreadSniffer(threading.Thread):
                             "TCP portdst": fields[7],
                             "UDP portdst": fields[8],
                         }
+                        if pk["ip src"] in self.ip_to_monitor:
+                            pk["data"] = fields[9]
+
+
                         packet_buffer.append(pk)
                         #print('TS: scansione')
                         self.write_pkt(pk['protocol'],pk['size'])

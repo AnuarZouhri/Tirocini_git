@@ -265,8 +265,17 @@ class Interfaccia(tk.Frame):
 
         SetPath(self, on_confirm_callback=on_directory_chosen)
 
+    def show_notification(self, message, duration=3000, type="warning"):
+        # Evita duplicati
+        for notif in self.active_notifications:
+            if notif.message == message:
+                return
 
-    def show_notification(self, message, duration=1000, type="warning"):
+        # Massimo 3 notifiche
+        if len(self.active_notifications) >= 3:
+            oldest = self.active_notifications.pop(0)
+            oldest.destroy()
+
         colors = {
             "info": "#e1f5fe",
             "success": "#d0f0c0",
@@ -275,14 +284,20 @@ class Interfaccia(tk.Frame):
         }
         bg = colors.get(type, "#ffffcc")
 
-        # Ogni notifica spostata di 60 pixel rispetto alla precedente
-        y_offset = 80 + len(self.active_notifications) * 60
-
-        popup = NotificationPopup(self, message, y_offset=y_offset, duration=duration, bg_color=bg)
+        popup = NotificationPopup(self, message, duration=duration, bg_color=bg)
+        popup.message = message
         self.active_notifications.append(popup)
 
         def cleanup():
             if popup in self.active_notifications:
                 self.active_notifications.remove(popup)
+                popup.destroy()
+                self.reposition_notifications()
 
         popup.after(duration, cleanup)
+        self.reposition_notifications()
+
+    def reposition_notifications(self):
+        for index, popup in enumerate(self.active_notifications):
+            y_offset = 80 + index * 60
+            popup.place_popup(self, y_offset)

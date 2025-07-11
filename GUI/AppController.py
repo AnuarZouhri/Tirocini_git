@@ -13,7 +13,7 @@ import csv
 class AppController:
     def __init__(self, root):
         self.root = root
-        root.iconbitmap("Pictures/Logo.ico")
+        self.root.iconbitmap("Pictures/Logo.ico")
         self.root.title("EASY SHARK")
 
         self.root.geometry("1900x1000")
@@ -60,8 +60,8 @@ class AppController:
 
     def start_analysis(self,setted_values, ports, ips):
         self.setted_values = setted_values
-        self.thread_sniffer = ThreadSniffer(self.queue, self.file_path,interface=str(setted_values['interface']))
-        self.thread_analyzer = ThreadAnalyzer(self.queue, self.frames["Interfaccia"], self.log_path, dict(list(self.setted_values.items())[1:]),ports, ips)
+        self.thread_sniffer = ThreadSniffer(self.queue, self.file_path,ips,interface=str(setted_values['interface']))
+        self.thread_analyzer = ThreadAnalyzer(self.queue, self.frames["Interfaccia"], self.log_path, dict(list(self.setted_values.items())[1:]),ports)
         self.frames["Interfaccia"].set_threads(self.thread_sniffer, self.thread_analyzer)
 
         self.thread_sniffer.daemon = True

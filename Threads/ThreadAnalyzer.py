@@ -4,7 +4,7 @@ import csv
 import datetime
 
 class ThreadAnalyzer(threading.Thread):
-    def __init__(self, queue, interface, log_path,threshold, ports, ips):
+    def __init__(self, queue, interface, log_path,threshold, ports):
 
         super().__init__()
         self.queue = queue
@@ -16,12 +16,12 @@ class ThreadAnalyzer(threading.Thread):
         self.top_protocols = {}
         self.top_source_ips = {}
         self.top_source_ipd = {}
-        self.latest_pack_to_send = []
+        self.latest_pack = []
 
 
         self.prot_threshold = threshold
         self.ports = ports #porte da monitorare
-        self.ips = ips #indirizzi IP da monitorare
+
 
         #print(self.prot_threshold)
 
@@ -103,12 +103,12 @@ class ThreadAnalyzer(threading.Thread):
             # aggiorna il valore massimo prima di inviare
             self.last_timestamp_sent = new_packets[-1]['timestamp']
 
-        self.latest_pack_to_send = new_packets
+        self.latest_pack = new_packets
 
     def packet_protocol_plot(self):
         filtered_list = [
             {"protocol": pkt["protocol"]}
-            for pkt in self.latest_pack_to_send
+            for pkt in self.latest_pack
             if "protocol" in pkt
         ]
 
@@ -117,7 +117,7 @@ class ThreadAnalyzer(threading.Thread):
     def packet_avg_size_plot(self):
         filtered_list = [
             {"size": pkt["size"], 'protocol': pkt['protocol']}
-            for pkt in self.latest_pack_to_send
+            for pkt in self.latest_pack
             if "size" in pkt
         ]
 
@@ -126,7 +126,7 @@ class ThreadAnalyzer(threading.Thread):
     def packet_table(self):
         filtered_list = [
             {"size": pkt["size"], 'protocol': pkt['protocol'], 'timestamp':pkt['timestamp']}
-            for pkt in self.latest_pack_to_send
+            for pkt in self.latest_pack
             if "size" in pkt and 'protocol' in pkt and 'timestamp' in pkt
         ]
 
@@ -135,7 +135,7 @@ class ThreadAnalyzer(threading.Thread):
     def packet_ip_mac_table(self):
         filtered_list = [
             {"ip src": pkt["ip src"], 'ip dst': pkt['ip dst'], 'MAC dst':pkt['MAC dst'], 'MAC src':pkt['MAC src']}
-            for pkt in self.latest_pack_to_send
+            for pkt in self.latest_pack
             if "ip src" in pkt and 'ip dst' in pkt and 'MAC dst' in pkt and 'MAC src' in pkt
         ]
 
@@ -144,7 +144,7 @@ class ThreadAnalyzer(threading.Thread):
     def packet_port_plot(self):
         filtered_list = []
 
-        for pkt in self.latest_pack_to_send:
+        for pkt in self.latest_pack:
 
             port = None
             if pkt.get("TCP portdst"):
@@ -194,7 +194,7 @@ class ThreadAnalyzer(threading.Thread):
         self.alarm = bool(self.alarm_list)
 
     def check_risky_port(self):
-        for pkt in self.latest_pack_to_send:
+        for pkt in self.latest_pack:
             port = pkt.get('TCP portdst') or pkt.get('UDP portdst')
             if not port:
                 continue
@@ -211,7 +211,11 @@ class ThreadAnalyzer(threading.Thread):
 
 
     def check_new_messages(self):
-        pass
+        for pkt in self.latest_pack:
+            if pkt.get('data'):
+                text = bytes.fromhex(pkt['data']).decode("utf-8", errors="ignore")
+
+                pass
 
 
 
