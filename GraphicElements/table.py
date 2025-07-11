@@ -24,12 +24,12 @@ class PacketTable:
         self.tree.heading("bitrate", text="Bit Rate (bps)")
         self.tree.heading("Time", text="Time")
 
-        self.tree.column("Id scansione", width=70,stretch=False)
+        self.tree.column("Id scansione", width=85,stretch=False)
         self.tree.column("count", width=70,stretch=False)
         self.tree.column("tcp_udp", width=20)
         self.tree.column("protocols", width=20)
         self.tree.column("bitrate", width=95,stretch=False)
-        self.tree.column("Time", width=95)
+        self.tree.column("Time", width=150,stretch=False)
 
         self.tree.pack(fill="both", expand=True)
 
@@ -136,99 +136,14 @@ class PacketTable:
         else:
             del self.data[:j + 1]
 
-    '''def update_table(self,data):
-        try:
-            if not self.tree.winfo_exists():
-                return
-        except tk.TclError:
-            return
 
-        if not data:
-            self.second += 1
-            # Inserisci una riga con tutti 0 (e lista vuota per i protocolli)
-            item_id = self.tree.insert(
-                "", "end",
-                values=(self.second, 0, "0% / 0%", [], 0)
-            )
-            # Scorri se necessario
-            self.tree.see(item_id)
-            return
-
-
-
-        self.data.extend(data)
-
-        protocol_list = []
-        tcp_count = 0
-        udp_count = 0
-        total_bytes = 0
-        count = 0
-        j = 0
-
-        time_to_scan = data[0]['timestamp']
-        self.last_ts_rcv = data[0]['timestamp']
-
-        for i, pkt in enumerate(self.data):
-            if pkt['timestamp'] - self.last_ts_rcv < 1:
-                if pkt['protocol'] == 'TCP':
-                    tcp_count += 1
-                if pkt['protocol'] == 'UDP':
-                    udp_count += 1
-                if pkt['protocol'] not in protocol_list:
-                    protocol_list.append(pkt['protocol'])
-                count = count + 1
-                total_bytes += pkt['size']
-                j = i
-            elif pkt['timestamp'] - self.last_ts_rcv >= 1:
-                break
-
-
-        self.last_ts_rcv = self.data[j]['timestamp'] #ultimo timestamp ricevuto
-
-
-        self.second = self.second + 1
-        total = tcp_count + udp_count
-        tcp_udp_str = f"{round(((tcp_count / total) * 100),2)}% / {round(100 - (tcp_count / total * 100),2)}%" if total > 0 else "0% / 0%"
-
-        # Verifica se l'ultima riga è visibile PRIMA di inserire una nuova riga
-        children = self.tree.get_children()
-        last_visible = False
-
-        if children:
-            last_item = children[-1]
-            bbox = self.tree.bbox(last_item)
-            if bbox:
-                y = bbox[1]
-                height = self.tree.winfo_height()
-                if y < height:
-                    last_visible = True
-
-        dt = datetime.datetime.fromtimestamp(time_to_scan)
-        formatted = dt.strftime('%d/%m/%Y %H:%M:%S') + f".{int(dt.microsecond / 1000):03d}"
-
-        # Inserisce la nuova riga
-        item_id = self.tree.insert("", "end", values=(
-            self.second, count, tcp_udp_str, protocol_list,
-            total_bytes * 8, formatted
-
-        ))
-
-        if last_visible:
-            self.tree.see(item_id)
-
-        if j == 0:
-            del self.data[j]
-        else:
-            del self.data[:j]
-            
-    '''
 
     def export_to_csv(self, filename):
         try:
             with open(filename, mode="w", newline="") as file:
                 writer = csv.writer(file, delimiter=';')
                 # Intestazioni colonna
-                writer.writerow(["Second", "Frames", "TCP/UDP (%)", "Protocols", "Bit rate (bps)"])
+                writer.writerow(["Id scansione", "Frames", "TCP/UDP (%)", "Protocols", "Bit rate (bps)", "Time"])
                 # Scrive tutte le righe visibili nella tabella
                 for item_id in self.tree.get_children():
                     values = self.tree.item(item_id, "values")
