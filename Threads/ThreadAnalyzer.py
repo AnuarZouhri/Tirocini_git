@@ -225,14 +225,15 @@ class ThreadAnalyzer(threading.Thread):
                 print('SCRIVO NEL FILE')
                 message = self.start_attack_messages['Port'] + f" {port}"
                 self.interface.update_alert_table(message,self.get_time(time.time()))
-
+                self.write_log_protocol_event(message,time.time(),time.time())
 
     def check_new_messages(self):
         for pkt in self.latest_pack:
             if pkt.get('data'):
                 text = bytes.fromhex(pkt['data']).decode("utf-8", errors="ignore")
+                print(text)
                 self.interface.update_alert_table(text,self.get_time(time.time()))
-
+                self.write_log_protocol_event(text,time.time(),time.time())
 
     def stop(self):
         self.running = False

@@ -10,7 +10,6 @@ import os
 import tkinter as tk
 from tkinter import simpledialog, messagebox
 import shutil
-from GUI.NotificationPopUP import NotificationPopup
 
 
 class Interfaccia(tk.Frame):
