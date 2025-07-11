@@ -8,7 +8,7 @@ class DoSAlertTable(ttk.Frame):
     def __init__(self, parent: tk.Widget):
         super().__init__(parent)
 
-        title_label = ttk.Label(self, text="Notification table", font=("Arial", 10, "bold"))
+        title_label = ttk.Label(self, text="Notification Table", font=("Arial", 10, "bold"))
         title_label.pack(anchor="w", pady=(0, 2))
 
         # Scrollbar

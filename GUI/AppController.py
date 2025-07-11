@@ -1,7 +1,7 @@
 # app_controller.py
 
 import tkinter as tk
-from GUI.Interfaccia import Interfaccia
+from GUI.Interface import Interface
 from GUI.StartPage import StartPage
 from Threads.ThreadSniffer import ThreadSniffer
 from Threads.ThreadAnalyzer import ThreadAnalyzer
@@ -26,7 +26,7 @@ class AppController:
 
         self.queue = Queue()
         self.file_path = "Threads/Statistics/statistiche.txt"
-        self.log_path = "Threads/Log/log_protocollo.csv"
+        self.log_path = "Threads/Log/log_file.csv"
 
         self._init_files()
         self.start_analyzing = time.time()
@@ -34,7 +34,7 @@ class AppController:
         # Crea le schermate
         self.frames = {}
         self.frames["StartPage"] = StartPage(self.container, self)
-        self.frames["Interfaccia"] = Interfaccia(self.container, self.start_analyzing)
+        self.frames["Interfaccia"] = Interface(self.container, self.start_analyzing)
 
         # Posiziona entrambi i frame nel container
         for frame in self.frames.values():

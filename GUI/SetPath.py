@@ -4,7 +4,7 @@ from tkinter import filedialog
 class SetPath(tk.Toplevel):
     def __init__(self, parent, on_confirm_callback):
         super().__init__(parent)
-        self.title("Seleziona cartella di salvataggio")
+        self.title("Select save folder")
         self.geometry("400x150")
         self.resizable(False, False)
 
@@ -15,22 +15,22 @@ class SetPath(tk.Toplevel):
         self.on_confirm_callback = on_confirm_callback
         self.selected_directory = None
 
-        self.label = tk.Label(self, text="Scegli la cartella in cui esportare il PDF:")
+        self.label = tk.Label(self, text="Choose the folder to export the PDF")
         self.label.pack(pady=5)
 
-        self.choose_button = tk.Button(self, text="Sfoglia", command=self.choose_directory)
+        self.choose_button = tk.Button(self, text="Choose", command=self.choose_directory)
         self.choose_button.pack()
 
-        self.path_label = tk.Label(self, text="Nessuna cartella selezionata", fg="gray")
+        self.path_label = tk.Label(self, text="No folder selected", fg="gray")
         self.path_label.pack(pady=5)
 
         button_frame = tk.Frame(self)
         button_frame.pack(pady=10)
 
-        self.confirm_button = tk.Button(button_frame, text="Conferma", command=self.confirm, state=tk.DISABLED)
+        self.confirm_button = tk.Button(button_frame, text="Confirm", command=self.confirm, state=tk.DISABLED)
         self.confirm_button.pack(side=tk.LEFT, padx=10)
 
-        self.cancel_button = tk.Button(button_frame, text="Annulla", command=self.destroy)
+        self.cancel_button = tk.Button(button_frame, text="Cancel", command=self.destroy)
         self.cancel_button.pack(side=tk.LEFT, padx=10)
 
     def choose_directory(self):

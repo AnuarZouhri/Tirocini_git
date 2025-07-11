@@ -12,7 +12,7 @@ from tkinter import simpledialog, messagebox
 import shutil
 
 
-class Interfaccia(tk.Frame):
+class Interface(tk.Frame):
 
     def __init__(self, parent, start_time):
         super().__init__(parent, bg="white")
@@ -49,10 +49,10 @@ class Interfaccia(tk.Frame):
         btn_frame = tk.Frame(left_frame)
         btn_frame.grid(row=0, column=0, sticky="ew", columnspan=2)
 
-        btn_stop = tk.Button(btn_frame, text="Interrompi scansione", command=self.stop_threads)
+        btn_stop = tk.Button(btn_frame, text="Stop scanning", command=self.stop_threads)
         btn_stop.pack(side="left", padx=5)
 
-        btn_export = tk.Button(btn_frame, text="Esporta Statistiche", command=self.export_stats)
+        btn_export = tk.Button(btn_frame, text="Export statistics", command=self.export_stats)
         btn_export.pack(side="left", padx=5)
 
 
@@ -219,20 +219,20 @@ class Interfaccia(tk.Frame):
             root.iconbitmap("Pictures/Logo.ico")
             root.withdraw()  # Nasconde la finestra principale Tkinter
 
-            nome_file = simpledialog.askstring("Nome file", "Inserisci il nome per il file PDF (senza estensione):")
+            nome_file = simpledialog.askstring("Filename", "Enter the name for the PDF file (without .pdf):")
             root.destroy()
 
             if not nome_file:
-                print("Nome file non inserito, operazione annullata.")
+                print("File name not entered, operation cancelled.")
                 return
 
             nome_pdf = nome_file + ".pdf"
             percorso_completo = os.path.join(cartella_scelta, nome_pdf)
 
             if os.path.exists(percorso_completo):
-                messagebox.showerror("Errore",
-                                     f"Il file '{nome_pdf}' esiste già nella cartella selezionata.\nScegli un nome diverso.")
-                print(f"File '{nome_pdf}' già esistente in: {cartella_scelta}. Operazione annullata.")
+                messagebox.showerror("Error",
+                                     f"The file '{nome_pdf}' already exists in the selected folder.\nPlease choose a different name.")
+                print(f"File '{nome_pdf}' already exists in: {cartella_scelta}. Operation canceled.")
                 return
 
             from Threads.Statistics.Statistics import generate_statistics
@@ -247,13 +247,13 @@ class Interfaccia(tk.Frame):
                 start_time=self.start_analyzing
             )
 
-            print(f"PDF generato nella cartella: {cartella_scelta} con nome: {nome_pdf}")
+            print(f"PDF generated in folder: {cartella_scelta} with name: {nome_pdf}")
             self.ip_mac_table.export_to_csv(path_ip_mac_table)
             self.packet_table.export_to_csv(path_packet_table)
 
             # 🔁 Rinomina log_protocollo.csv se esiste già
             src_path = "Threads/Log/log_protocollo.csv"
-            dst_path = os.path.join(cartella_scelta, "log_protocollo.csv")
+            dst_path = os.path.join(cartella_scelta, "log_file.csv")
 
             counter = 1
             base, ext = os.path.splitext(dst_path)
