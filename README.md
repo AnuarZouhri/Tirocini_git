@@ -31,7 +31,7 @@ Il progetto è stato realizzato da 2 studenti del corso di Ingegneria Informatic
 
 ### **Clonare il repository:**  
 ```bash  
-
+https://github.com/AnuarZouhri/Tirocini_git.git
 ```  
 
 ### **File eseguibile disponibile:**  
