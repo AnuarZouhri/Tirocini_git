@@ -10,7 +10,14 @@ import os
 import tkinter as tk
 from tkinter import simpledialog, messagebox
 import shutil
+import sys
 
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS  # Se eseguito da .exe PyInstaller
+    except AttributeError:
+        base_path = os.path.abspath(".")  # Se eseguito da sorgente
+    return os.path.join(base_path, relative_path)
 
 class Interface(tk.Frame):
 
@@ -215,12 +222,20 @@ class Interface(tk.Frame):
         from GUI.SetPath import SetPath
 
         def on_directory_chosen(cartella_scelta):
+            """
             root = tk.Tk()
             root.iconbitmap("Pictures/Logo.ico")
             root.withdraw()  # Nasconde la finestra principale Tkinter
 
             nome_file = simpledialog.askstring("Filename", "Enter the name for the PDF file (without .pdf):")
             root.destroy()
+            """
+
+            nome_file = simpledialog.askstring(
+                "Filename",
+                "Enter the name for the PDF file (without .pdf):",
+                parent=self
+            )
 
             if not nome_file:
                 print("File name not entered, operation cancelled.")
@@ -236,9 +251,23 @@ class Interface(tk.Frame):
                 return
 
             from Threads.Statistics.Statistics import generate_statistics
-            percorso_file_statistiche = "Threads/Statistics/statistiche.txt"
-            path_ip_mac_table = os.path.join(cartella_scelta, "ip_mac_table.csv")
-            path_packet_table = os.path.join(cartella_scelta, "packet_table.csv")
+            percorso_file_statistiche = resource_path("Threads/Statistics/statistiche.txt")
+            #percorso_file_statistiche = "Threads/Statistics/statistiche.txt"
+
+            def safe_path(filepath):
+                base, ext = os.path.splitext(filepath)
+                counter = 1
+                new_path = filepath
+                while os.path.exists(new_path):
+                    new_path = f"{base}_{counter}{ext}"
+                    counter += 1
+                return new_path
+
+            path_ip_mac_table = safe_path(os.path.join(cartella_scelta, "ip_mac_table.csv"))
+            path_packet_table = safe_path(os.path.join(cartella_scelta, "packet_table.csv"))
+
+            #path_ip_mac_table = os.path.join(cartella_scelta, "ip_mac_table.csv")
+            #path_packet_table = os.path.join(cartella_scelta, "packet_table.csv")
 
             generate_statistics(
                 nome_file=percorso_file_statistiche,
@@ -252,7 +281,9 @@ class Interface(tk.Frame):
             self.packet_table.export_to_csv(path_packet_table)
 
             # 🔁 Rinomina log_protocollo.csv se esiste già
-            src_path = "Threads/Log/log_protocollo.csv"
+            #src_path = "Threads/Log/log_protocollo.csv"
+            src_path = resource_path("Threads/Log/log_file.csv")
+            #src_path = "Threads/Log/log_file.csv"
             dst_path = os.path.join(cartella_scelta, "log_file.csv")
 
             counter = 1
@@ -261,7 +292,15 @@ class Interface(tk.Frame):
                 dst_path = f"{base}_{counter}{ext}"
                 counter += 1
 
-            shutil.move(src_path, dst_path)
+            if os.path.exists(src_path):
+                shutil.move(src_path, dst_path)
+                print(f"Export completed: {dst_path}")
+            else:
+                messagebox.showwarning("Missing file",
+                                       f"⚠️ The file '{src_path}' was not found. Partial export.")
+                print(f"Warning: file '{src_path}' not found. Partial export.")
+
+            #shutil.move(src_path, dst_path)
 
         SetPath(self, on_confirm_callback=on_directory_chosen)
 

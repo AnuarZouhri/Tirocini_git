@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import ipaddress
+import os, sys
 
 class StartPage(tk.Frame):
     def __init__(self, parent, controller):
@@ -14,7 +15,17 @@ class StartPage(tk.Frame):
         self.entries = []
 
         # Logo
-        self.logo = tk.PhotoImage(file="Pictures/logo_first_page.png")
+
+        if getattr(sys, 'frozen', False):
+            base_path = sys._MEIPASS
+        else:
+            base_path = os.path.abspath(".")
+
+        image_path = os.path.join(base_path, "Pictures", "logo_first_page.png")
+        self.logo = tk.PhotoImage(file=image_path)
+        #photo = tk.PhotoImage(file=image_path)
+
+        #self.logo = tk.PhotoImage(file="Pictures/logo_first_page.png")
         ttk.Label(self, image=self.logo, background="#f2f2f2").pack(pady=(30, 20))
 
         container = tk.Frame(self, bg="#f2f2f2")
@@ -63,8 +74,20 @@ class StartPage(tk.Frame):
         self.entry_ip.grid(row=1, column=1, padx=10, pady=5, sticky='w')
 
         # Pulsante Avanti
-        ttk.Button(self, text="Start scanning", command=self.start).pack(pady=(10, 5))
+        self.start_button = ttk.Button(self, text="Start scanning", command=self.start)
+        self.start_button.pack(pady=(10, 5))
+        self.start_button.bind("<Return>", lambda e: self.start())
+        #ttk.Button(self, text="Start scanning", command=self.start).pack(pady=(10, 5))
 
+        # Lista ordinata di tutti i campi input (incluso il bottone finale)
+        self.all_entries = [
+            self.interface_entry,
+            *self.entries,
+            self.entry_porta,
+            self.entry_ip,
+            self.start_button  # ⬅️ Aggiunto il bottone alla navigazione
+        ]
+        """
         # Lista ordinata di tutti i campi input
         self.all_entries = [
             self.interface_entry,
@@ -72,7 +95,7 @@ class StartPage(tk.Frame):
             self.entry_porta,
             self.entry_ip
         ]
-
+        """
         for idx, entry in enumerate(self.all_entries):
             entry.bind("<Down>", lambda e, i=idx: self.focus_next(i))
             entry.bind("<Up>", lambda e, i=idx: self.focus_prev(i))

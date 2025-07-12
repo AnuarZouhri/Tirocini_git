@@ -124,5 +124,5 @@ def generate_statistics(start_time,
         pdf.savefig(fig)
         plt.close()
 
-    print(f"PDF generato in: {output_pdf} con massimo {max_per_pagina} boxplot per pagina!")
+    print(f"PDF generated in: {output_pdf} with up to {max_per_pagina} boxplots per page!")
 
