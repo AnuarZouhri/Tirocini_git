@@ -16,8 +16,7 @@ Maggiori dettagli sono presenti nella cartella Doc.
 ## 🛠️ Tecnologie Utilizzate  
 - **Linguaggio di Programmazione:** Python 
 - **Framework e Librerie:** Tkinter 
-- **Strumenti di Versionamento:** Git/GitHub  
-- **Gestione del Progetto:** MAVEN  
+- **Strumenti di Versionamento:** Git/GitHub 
 - **IDE Utilizzato:** PyCharm Community Edition 2024.3.3
 
 ## 👥 Team di Sviluppo  
