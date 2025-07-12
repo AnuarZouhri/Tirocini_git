@@ -20,8 +20,6 @@ Maggiori dettagli sono presenti nella cartella Doc.
 - **IDE Utilizzato:** PyCharm Community Edition 2024.3.3
 - **Altri strumenti utilizzati:** Wireshark
 
-## Nota
-Il software è attualmente compatibile solo con Windows
 
 ## 👥 Team di Sviluppo  
 Il progetto è stato realizzato da 2 studenti del corso di Ingegneria Informatica presso l'Università degli Studi di Salerno (UNISA) presso l'azienda ospitante Innovation Engineering S.R.L.S:  
@@ -38,3 +36,6 @@ https://github.com/AnuarZouhri/Tirocini_git.git
 
 ### **File eseguibile disponibile:**  
 Nel repository è disponibile la prima release del progetto.   
+
+## Note
+Il software è attualmente compatibile solo con Windows
