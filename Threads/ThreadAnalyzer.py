@@ -29,8 +29,8 @@ class ThreadAnalyzer(threading.Thread):
             "TCP": "Possible ongoing attack: DoS (TCP flood)",
             "UDP": "Possible ongoing attack: DoS (UDP flood)",
             "DNS": "Possible ongoing attack: DoS (DNS amplification)",
-            "ICMP": "Possible ongoing attack: DoS (ARP flood)",
-            "ARP": "Possible ongoing attack: DoS (ICMP flood)",
+            "ICMP": "Possible ongoing attack: DoS (ICMP flood)",
+            "ARP": "Possible ongoing attack: DoS (ARP flood)",
             "Port": "Unexpected data received on the port",
         }
 

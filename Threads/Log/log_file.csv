@@ -1,18 +1,1 @@
-Possible ongoing attack: DoS (UDP flood);14/07/2025 14:24:27;14/07/2025 14:25:09
-Possible ongoing attack: DoS (ICMP flood);14/07/2025 14:24:54;14/07/2025 14:25:09
-Possible ongoing attack: DoS (UDP flood);14/07/2025 15:12:50;14/07/2025 15:13:05
-Possible ongoing attack: DoS (ICMP flood);14/07/2025 15:14:10;14/07/2025 15:14:26
-Possible ongoing attack: DoS (UDP flood);14/07/2025 15:14:10;14/07/2025 15:14:28
-Possible ongoing attack: DoS (UDP flood);14/07/2025 15:14:45;14/07/2025 15:14:46
-Possible ongoing attack: DoS (TCP flood);14/07/2025 15:15:23;14/07/2025 15:15:45
-Possible ongoing attack: DoS (TCP flood);14/07/2025 15:15:49;14/07/2025 15:15:53
-Possible ongoing attack: DoS (ICMP flood);14/07/2025 15:15:45;14/07/2025 15:15:57
-Possible ongoing attack: DoS (TCP flood);14/07/2025 15:15:55;14/07/2025 15:16:00
-Possible ongoing attack: DoS (UDP flood);14/07/2025 15:15:20;14/07/2025 15:16:16
-Possible ongoing attack: DoS (ICMP flood);14/07/2025 15:16:03;14/07/2025 15:16:19
-Possible ongoing attack: DoS (ICMP flood);14/07/2025 15:16:27;14/07/2025 15:16:28
-Possible ongoing attack: DoS (ICMP flood);14/07/2025 15:16:29;14/07/2025 15:16:31
-Possible ongoing attack: DoS (TCP flood);14/07/2025 15:16:09;14/07/2025 15:16:44
-Possible ongoing attack: DoS (ICMP flood);14/07/2025 15:16:33;14/07/2025 15:17:03
-Possible ongoing attack: DoS (UDP flood);14/07/2025 15:16:19;14/07/2025 15:17:08
-Possible ongoing attack: DoS (TCP flood);14/07/2025 15:17:04;14/07/2025 15:17:08
+Description;Start;End
