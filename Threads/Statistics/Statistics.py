@@ -53,12 +53,12 @@ def generate_statistics(start_time,
     with PdfPages(output_pdf) as pdf:
 
         fig = plt.figure(figsize=(12, 8))
-        fig.text(0.5, 0.85, "Analisi descrittiva dei pacchetti monitorati", fontsize=20, ha='center')
-        fig.text(0.35, 0.725, f"Inizio scansione: {inizio}", fontsize=15, ha='center')
-        fig.text(0.75, 0.725, f"Fine scansione: {fine}", fontsize=15, ha='center')
-        fig.text(0.1, 0.60, f"Totale pacchetti analizzati: {len(dimensioni_all)}", fontsize=14, ha='left')
-        fig.text(0.1, 0.55, f"Dimensione media dei pacchetti: {round(np.mean(dimensioni_all),2)}", fontsize=14, ha='left')
-        fig.text(0.1, 0.50, f"Mediana sulla dimensione dei pacchetti: {np.median(dimensioni_all)}", fontsize=14, ha='left')
+        fig.text(0.5, 0.85, "Descriptive analysis of the monitored packets", fontsize=20, ha='center')
+        fig.text(0.35, 0.725, f"Start: {inizio}", fontsize=15, ha='center')
+        fig.text(0.75, 0.725, f"End: {fine}", fontsize=15, ha='center')
+        fig.text(0.1, 0.60, f"Total packets: {len(dimensioni_all)}", fontsize=14, ha='left')
+        fig.text(0.1, 0.55, f"Avg size of packets: {round(np.mean(dimensioni_all),2)}", fontsize=14, ha='left')
+        fig.text(0.1, 0.50, f"Median of packets'size: {np.median(dimensioni_all)}", fontsize=14, ha='left')
 
         #fig.text(0.1, 0.45, f"Deviazione standard stimata sulla dimensione dei pacchetti: {round(dev_std(dimensioni_all),2)}", fontsize=14, ha='left')
 
@@ -78,13 +78,13 @@ def generate_statistics(start_time,
             axs = axs.flatten()
 
             if i == 0:
-                fig.suptitle("Boxplot per Protocollo", fontsize=16)
+                fig.suptitle("Boxplot for protocol", fontsize=16)
 
             for j, (protocollo, dimensioni) in enumerate(gruppo):
                 axs[j].boxplot(dimensioni)
                 axs[j].set_title(protocollo)
-                axs[j].set_xlabel("Campioni")
-                axs[j].set_ylabel("Dimensione")
+                axs[j].set_xlabel("Data")
+                axs[j].set_ylabel("Dim")
 
             for k in range(len(gruppo), len(axs)):
                 fig.delaxes(axs[k])
@@ -99,8 +99,8 @@ def generate_statistics(start_time,
         ax.yaxis.set_major_locator(MultipleLocator(50))
         median_prop = dict(linewidth=3, color='red')
         ax.boxplot(dimensioni_all, medianprops=median_prop)
-        ax.set_xlabel("Campioni")
-        ax.set_ylabel("Dimensione")
+        ax.set_xlabel("Data")
+        ax.set_ylabel("Dim")
 
         x_jitter = np.random.normal(1, 0.04, size=len(dimensioni_all))
         ax.scatter(x_jitter, dimensioni_all, alpha=0.5, color='blue')
@@ -116,9 +116,9 @@ def generate_statistics(start_time,
 
         fig, ax = plt.subplots(figsize=(12, 8))
         ax.bar(etichette, valori, color='skyblue')
-        ax.set_title("Numero di elementi per protocollo")
-        ax.set_xlabel("Protocollo")
-        ax.set_ylabel("Numero di elementi")
+        ax.set_title("Number of packtes per protocol")
+        ax.set_xlabel("Protocol")
+        ax.set_ylabel("N° of packtes")
         ax.grid(axis='y', linestyle='--', alpha=0.7)
         plt.tight_layout()
         pdf.savefig(fig)
