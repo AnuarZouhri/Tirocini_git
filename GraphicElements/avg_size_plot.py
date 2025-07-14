@@ -23,7 +23,7 @@ class LiveGraph:
 
         # Etichetta asse X
         self.canvas.create_text(self.width // 2, self.height - self.margin // 2.5,
-                                text="Seconds", font=("Arial", 10, "bold"))
+                                text="Scan ID", font=("Arial", 10, "bold"))
 
         # Etichetta asse Y
         self.canvas.create_text(self.margin // 4,self.height // 2,

@@ -120,7 +120,7 @@ class ProtocolLiveGraph:
                                 font=("Arial", 14, "bold"))
         # Etichette assi
         self.canvas.create_text(cw // 2, ch - m // 2.5,
-                                text="Seconds", font=("Arial", 10, "bold"))
+                                text="Scan ID", font=("Arial", 10, "bold"))
         self.canvas.create_text(m // 4, ch // 2,
                                 text="Count Packets", font=("Arial", 10, "bold"), angle=90)
 
