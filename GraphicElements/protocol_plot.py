@@ -23,8 +23,9 @@ class ProtocolLiveGraph:
         self.protocols = ['TCP']
         self.current_protocol.set(self.protocols[0])
         self.offset = 0  # Posizione di scroll
-        self.protocol_timestamps = defaultdict(list)
-        self.time_counter = 0
+
+        self.time_counter = 1
+        self.time_counter_dict = {'TCP':1}
 
 
         # Dropdown scelta protocollo
@@ -79,26 +80,27 @@ class ProtocolLiveGraph:
         except Exception as e:
             return
         counter = defaultdict(int)
-        new_protocols = []
 
 
         for pkt in data:
             proto = pkt['protocol']
             counter[proto] += 1
-            if proto not in self.protocols:
+            if proto not in self.time_counter_dict:
+                self.time_counter_dict[proto] = self.time_counter
                 self.protocols.append(proto)
-                new_protocols.append(proto)
 
         # Aggiorna struttura dati
         for proto in self.protocols:
             self.protocol_data[proto].append(counter[proto])
-            self.protocol_timestamps[proto].append(self.time_counter)
+            print(f"{proto}: {counter[proto]}")
 
+
+        print('fatto')
         self.time_counter += 1
 
         # Se sono arrivati nuovi protocolli, aggiorna il dropdown
-        if new_protocols:
-            self.refresh_dropdown()
+
+        self.refresh_dropdown()
 
         # Mostra nuovo grafico se siamo in fondo
         proto = self.current_protocol.get()
@@ -134,11 +136,19 @@ class ProtocolLiveGraph:
         max_visible_points = (cw - 2 * m) // self.x_spacing
         total_points = len(data)
 
+        #first_time = self.time_counter_dict[proto]  # default a 1 se mancante
+        #first_index = first_time # perché gli indici della lista partono da 0
+
+        # Calcola l'intervallo visibile limitato all'inizio effettivo
+        #start = max(first_index, total_points - max_visible_points - self.offset)
         # Calcola l'inizio e la fine della finestra visibile in base all'offset
         start = max(0, total_points - max_visible_points - self.offset)
         end = min(total_points, start + max_visible_points)
 
         visible_data = data[start:end]
+
+        if not visible_data:
+            return
 
         # Calcolo scala Y con padding come LiveGraph
         raw_max = max(visible_data)
@@ -163,7 +173,7 @@ class ProtocolLiveGraph:
             x = m + i * self.x_spacing
             if i % 2 == 0:
                 self.canvas.create_line(x, ch - m, x, ch - m + 5, width=1)
-                label = str(start + i + 1)
+                label = str(start + self.time_counter_dict[proto] + i)
                 self.canvas.create_text(x, ch - m + 15, text=label, anchor="n", font=("Arial", 8))
 
         # Disegna linea e punti

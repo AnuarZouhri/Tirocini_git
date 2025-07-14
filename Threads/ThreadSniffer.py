@@ -81,14 +81,12 @@ class ThreadSniffer(threading.Thread):
 
                     if pk["ip src"] in self.ip_to_monitor:
                         pk["data"] = fields[9]
-                    print(pk)
-                    print("\n")
 
-                    # Primo pacchetto ricevuto → imposta il riferimento
+                    # Primo pacchetto ricevuto
                     if reference_ts is None:
                         reference_ts = epoch_time
 
-                    # Se entro 1 secondo → accumula
+                    # Se entro 1 secondo allora si accumulano i pacchetti fino ad arrivare a un secondo
                     if epoch_time - reference_ts < 1:
                         packet_buffer.append(pk)
                         self.write_pkt(pk['protocol'], pk['size'])
