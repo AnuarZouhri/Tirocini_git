@@ -6,11 +6,6 @@ from collections import defaultdict
 class ProtocolLiveGraph:
     def __init__(self, root):
         self.root = root
-        """
-        self.canvas_width = 700
-        self.canvas_height = 250
-        self.margin = 50
-        """
         self.canvas_width = 700
         self.canvas_height = 325
         self.margin = 70
@@ -168,7 +163,7 @@ class ProtocolLiveGraph:
             x = m + i * self.x_spacing
             if i % 2 == 0:
                 self.canvas.create_line(x, ch - m, x, ch - m + 5, width=1)
-                label = str(start + i)
+                label = str(start + i + 1)
                 self.canvas.create_text(x, ch - m + 15, text=label, anchor="n", font=("Arial", 8))
 
         # Disegna linea e punti
@@ -183,61 +178,3 @@ class ProtocolLiveGraph:
         for x, y in points:
             self.canvas.create_oval(x - 3, y - 3, x + 3, y + 3, fill='red')
 
-    """
-    def draw_graph(self):
-        self.canvas.delete("all")
-        proto = self.current_protocol.get()
-
-        # Assi
-        cw, ch, m = self.canvas_width, self.canvas_height, self.margin
-        self.canvas.create_line(m, m, m, ch - m, width=2)
-        self.canvas.create_line(m, ch - m, cw - m, ch - m, width=2)
-
-        # Titolo del grafico
-        self.canvas.create_text(cw // 2, m // 2, text=f"Packets per protocol: {proto}", font=("Arial", 14, "bold"))
-        # Etichetta asse Y
-        self.canvas.create_text(self.margin // 3, ch // 2, text="Count Packets", angle=90, font=("Arial", 10, "bold"))
-        # Etichetta asse X
-        self.canvas.create_text(cw // 2, ch - m // 2 + 10, text="Seconds", font=("Arial", 10, "bold"))
-
-        data = self.protocol_data[proto]
-
-        vis_pts = (self.canvas_width - 2 * self.margin) // self.x_spacing
-        start = max(0, len(data) - vis_pts - self.offset)
-        end = len(data) - self.offset
-        visible_data = data[start:end]
-
-        if not visible_data:
-            return
-
-        max_val = max(visible_data) or 1
-        max_val = int(max_val) + 1
-        for i in range(6):
-            y_val = i * max_val / 5
-            y = ch - m - y_val * ((ch - 2 * m) / max_val)
-            self.canvas.create_line(m - 5, y, m + 5, y, fill="gray")
-            self.canvas.create_text(m - 10, y, text=str(int(y_val)), anchor="e", font=("Arial", 8))
-
-        for i, _ in enumerate(visible_data):
-            x = m + i * self.x_spacing
-            if i % 5 == 0:
-                self.canvas.create_line(x, ch - m, x, ch - m + 5)
-                timestamp = self.protocol_timestamps[proto][start + i]
-                label = str(timestamp)
-                self.canvas.create_text(x, ch - m + 15, text=label, font=("Arial", 8))
-
-        points = []
-        for i, val in enumerate(visible_data):
-            x = m + i * self.x_spacing
-            y = ch - m - val * ((ch - 2 * m) / max_val)
-            points.append((x, y))
-
-        if points:
-            area = [(points[0][0], ch - m)] + points + [(points[-1][0], ch - m)]
-            self.canvas.create_polygon(area, fill="lightblue", outline="")
-
-        for i in range(1, len(points)):
-            self.canvas.create_line(points[i-1], points[i], fill="blue", width=2)
-        for x, y in points:
-            self.canvas.create_oval(x-3, y-3, x+3, y+3, fill="red", outline="")
-        """
