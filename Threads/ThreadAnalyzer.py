@@ -38,8 +38,8 @@ class ThreadAnalyzer(threading.Thread):
             "TCP": "End of TCP flooding",
             "UDP": "End of UDP flooding",
             "DNS": "End of DNS Amplification",
-            "ICMP": "End of ARP flooding",
-            "ARP": "End of ICMP flooding",
+            "ICMP": "End of ICMP flooding",
+            "ARP": "End of ARP flooding",
         }
 
 

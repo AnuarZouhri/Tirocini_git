@@ -74,7 +74,7 @@ class AppController:
         if not os.path.exists(self.log_path):
             with open(self.log_path, mode='w', newline='') as file:
                 writer = csv.writer(file)
-                writer.writerow(["Description", "Inizio", "Fine"])
+                writer.writerow(["Description", "Start", "End"])
 
     def show_frame(self, name):
         frame = self.frames[name]
