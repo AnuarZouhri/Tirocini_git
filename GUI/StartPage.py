@@ -69,7 +69,7 @@ class StartPage(tk.Frame):
         self.entry_porta['validatecommand'] = (self.entry_porta.register(self.validate_int), '%P')
         self.entry_porta.grid(row=0, column=1, padx=10, pady=5, sticky='w')
 
-        ttk.Label(monitor_frame, text="IP Dst to monitor:").grid(row=1, column=0, padx=10, pady=5, sticky='e')
+        ttk.Label(monitor_frame, text="IP Src to monitor:").grid(row=1, column=0, padx=10, pady=5, sticky='e')
         self.entry_ip = ttk.Entry(monitor_frame, width=25)
         self.entry_ip.grid(row=1, column=1, padx=10, pady=5, sticky='w')
 
