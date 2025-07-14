@@ -2,7 +2,7 @@ import threading
 import time
 import datetime
 import subprocess
-
+import sys
 
 class ThreadSniffer(threading.Thread):
 
@@ -41,8 +41,14 @@ class ThreadSniffer(threading.Thread):
             file.write(f"{protocollo},{dimensione}\n")
 
     def run(self):
+        CREATE_NO_WINDOW = 0x08000000 if sys.platform == "win32" else 0
+
         with subprocess.Popen(self.command, stdout=subprocess.PIPE,
-                              stderr=subprocess.DEVNULL, text=True) as proc:
+                              stderr=subprocess.DEVNULL, text=True,
+                              creationflags=CREATE_NO_WINDOW) as proc:
+
+        #with subprocess.Popen(self.command, stdout=subprocess.PIPE,
+                              #stderr=subprocess.DEVNULL, text=True) as proc:
 
             packet_buffer = []
             reference_ts = None

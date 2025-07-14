@@ -9,11 +9,28 @@ from Threads.Queue import Queue
 import time
 import os
 import csv
+import sys
 
 class AppController:
     def __init__(self, root):
         self.root = root
-        self.root.iconbitmap("Pictures/Logo.ico")
+
+        # Trova il percorso corretto (funziona anche da .exe)
+        if getattr(sys, 'frozen', False):  # Se eseguito da exe (PyInstaller)
+            base_path = sys._MEIPASS
+        else:
+            base_path = os.path.abspath(".")
+
+        # Percorso completo all'icona
+        icon_path = os.path.join(base_path, "Pictures", "Logo.ico")
+
+        # Imposta l'icona se esiste
+        if os.path.exists(icon_path):
+            self.root.iconbitmap(icon_path)
+        else:
+            print(f"⚠️ Icon not found: {icon_path}")
+
+        #self.root.iconbitmap("Pictures/Logo.ico")
         self.root.title("EASY SHARK")
 
         self.root.geometry("1900x1000")
@@ -25,8 +42,12 @@ class AppController:
         self.container.grid_columnconfigure(0, weight=1)
 
         self.queue = Queue()
-        self.file_path = "Threads/Statistics/statistiche.txt"
-        self.log_path = "Threads/Log/log_file.csv"
+
+        self.file_path = os.path.join(base_path, "Threads", "Statistics", "statistiche.txt")
+        self.log_path = os.path.join(base_path, "Threads", "Log", "log_file.csv")
+
+        #self.file_path = "Threads/Statistics/statistiche.txt"
+        #self.log_path = "Threads/Log/log_file.csv"
 
         self._init_files()
         self.start_analyzing = time.time()

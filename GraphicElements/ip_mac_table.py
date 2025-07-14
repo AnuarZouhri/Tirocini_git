@@ -155,7 +155,7 @@ class IpMacTable:
                 for item_id in self.tree.get_children():
                     values = self.tree.item(item_id, "values")
                     writer.writerow(values)
-            print(f"Esportazione completata: {filename}")
+            print(f"Export completed: {filename}")
         except Exception as e:
-            print(f"Errore durante l'esportazione: {e}")
+            print(f"Error while exporting: {e}")
 
