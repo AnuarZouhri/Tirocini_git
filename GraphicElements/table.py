@@ -17,6 +17,12 @@ class PacketTable:
             height=7
         )
 
+        style = ttk.Style()
+        style.configure("Small.Treeview", font=("TkDefaultFont", 8))  # riduce il testo nelle celle
+        style.configure("Small.Treeview.Heading",
+                        font=("TkDefaultFont", 9))  # leggermente più grande per l’intestazione
+        self.tree.configure(style="Small.Treeview")
+
         self.tree.heading("scan id", text="Scan Id")
         self.tree.heading("count", text="Frames")
         self.tree.heading("tcp_udp", text="TCP/UDP (%)")
@@ -27,7 +33,8 @@ class PacketTable:
         self.tree.column("scan id", width=85,stretch=False)
         self.tree.column("count", width=70,stretch=False)
         self.tree.column("tcp_udp", width=20)
-        self.tree.column("protocols", width=20)
+        self.tree.column("protocols", width=240, anchor='w', stretch=False)
+        #self.tree.column("protocols", width=20)
         self.tree.column("bitrate", width=95,stretch=False)
         self.tree.column("time", width=150,stretch=False)
 
