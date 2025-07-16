@@ -102,24 +102,6 @@ class LiveGraph:
             self.canvas.create_oval(x - 3, y - 3, x + 3, y + 3, fill='red')
 
 
-    '''def update(self,new_data):
-        if not new_data:
-            return
-
-        avg = sum(pkt['size'] for pkt in new_data) / len(new_data)
-        self.data.append(avg)
-
-        # Calcola quanti punti stanno visivamente nel canvas
-        max_visible_points = (self.width - 2 * self.margin) // self.point_spacing
-        if len(self.data) > max_visible_points:
-            self.data.pop(0)
-
-        self.canvas.delete('all')
-        self.draw_axes()
-        self.draw_graph()
-        self.time_counter += 1'''
-
-        #self.canvas.after(500, self.update)
     def update(self, new_data):
         if new_data:
             avg = sum(pkt['size'] for pkt in new_data) / len(new_data)

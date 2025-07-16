@@ -70,15 +70,6 @@ class PacketTable:
         except tk.TclError:
             return
 
-        if not data:
-            self.second += 1
-            item_id = self.tree.insert(
-                "", "end",
-                values=(self.second, 0, "0% / 0%", [], 0, "")
-            )
-            self.tree.see(item_id)
-            return
-
         self.data.extend(data)
 
         protocol_list = []

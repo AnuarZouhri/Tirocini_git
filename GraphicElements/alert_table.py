@@ -31,18 +31,7 @@ class DoSAlertTable(ttk.Frame):
         style.configure("Treeview", font=("Arial", 9), rowheight=25)
         style.configure("Treeview.Heading", font=("Arial", 9, "bold"))
 
-        # Messaggi di default
-        self.PROTOCOL_MESSAGES = {
-            "TCP": "Possible ongoing attack: DoS (TCP flood)",
-            "UDP": "Possible ongoing attack: DoS (UDP flood)",
-            "DNS": "Possible ongoing attack: DoS (DNS amplification)",
-            "ICMP": "Possible ongoing attack: DoS (ARP flood)",
-            "ARP": "Possible ongoing attack: DoS (ICMP flood)",
-            "Port": "Unexpected data received on the port",
-        }
-
     def add_alert(self, alert: str, alert_time):
-        """Aggiunge una riga alla tabella con protocollo e orario"""
         try:
             if not self.tree.winfo_exists():
                 return

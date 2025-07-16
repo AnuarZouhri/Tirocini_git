@@ -103,9 +103,6 @@ class Interface(tk.Frame):
         right_frame_pie2 = tk.Frame(right_frame_pie, bg="white", padx=2, pady=2)
         right_frame_pie2.pack(side='left', fill='both',expand=True)
 
-        #right_frame_pie3 = tk.Frame(right_frame_pie, bg="white", padx=2, pady=2)
-        #right_frame_pie3.pack(side='left', fill='both', expand=True)
-
         right_frame_alert_table = tk.Frame(right_frame, bg="white")
         right_frame_alert_table.pack(side='top', fill='both')
 
@@ -222,14 +219,6 @@ class Interface(tk.Frame):
         from GUI.SetPath import SetPath
 
         def on_directory_chosen(cartella_scelta):
-            """
-            root = tk.Tk()
-            root.iconbitmap("Pictures/Logo.ico")
-            root.withdraw()  # Nasconde la finestra principale Tkinter
-
-            nome_file = simpledialog.askstring("Filename", "Enter the name for the PDF file (without .pdf):")
-            root.destroy()
-            """
 
             nome_file = simpledialog.askstring(
                 "Filename",
@@ -266,9 +255,6 @@ class Interface(tk.Frame):
             path_ip_mac_table = safe_path(os.path.join(cartella_scelta, "ip_mac_table.csv"))
             path_packet_table = safe_path(os.path.join(cartella_scelta, "packet_table.csv"))
 
-            #path_ip_mac_table = os.path.join(cartella_scelta, "ip_mac_table.csv")
-            #path_packet_table = os.path.join(cartella_scelta, "packet_table.csv")
-
             generate_statistics(
                 nome_file=percorso_file_statistiche,
                 output_dir=cartella_scelta,
@@ -281,9 +267,7 @@ class Interface(tk.Frame):
             self.packet_table.export_to_csv(path_packet_table)
 
             # 🔁 Rinomina log_protocollo.csv se esiste già
-            #src_path = "Threads/Log/log_protocollo.csv"
             src_path = resource_path("Threads/Log/log_file.csv")
-            #src_path = "Threads/Log/log_file.csv"
             dst_path = os.path.join(cartella_scelta, "log_file.csv")
 
             counter = 1

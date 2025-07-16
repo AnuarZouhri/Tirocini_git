@@ -1,5 +1,3 @@
-# app_controller.py
-
 import tkinter as tk
 from GUI.Interface import Interface
 from GUI.StartPage import StartPage
@@ -45,9 +43,6 @@ class AppController:
 
         self.file_path = os.path.join(base_path, "Threads", "Statistics", "statistiche.txt")
         self.log_path = os.path.join(base_path, "Threads", "Log", "log_file.csv")
-
-        #self.file_path = "Threads/Statistics/statistiche.txt"
-        #self.log_path = "Threads/Log/log_file.csv"
 
         self._init_files()
         self.start_analyzing = time.time()

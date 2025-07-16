@@ -23,9 +23,7 @@ class StartPage(tk.Frame):
 
         image_path = os.path.join(base_path, "Pictures", "logo_first_page.png")
         self.logo = tk.PhotoImage(file=image_path)
-        #photo = tk.PhotoImage(file=image_path)
 
-        #self.logo = tk.PhotoImage(file="Pictures/logo_first_page.png")
         ttk.Label(self, image=self.logo, background="#f2f2f2").pack(pady=(30, 20))
 
         container = tk.Frame(self, bg="#f2f2f2")
@@ -34,7 +32,7 @@ class StartPage(tk.Frame):
         container.grid_columnconfigure(0, weight=1)
         container.grid_columnconfigure(1, weight=1)
 
-        # 🧷 Sezione Interfaccia (centrata con 3 colonne)
+        # Sezione Interfaccia (centrata con 3 colonne)
         interfaccia_frame = ttk.LabelFrame(container, text="Interface", padding=(20, 10))
         interfaccia_frame.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
@@ -49,7 +47,7 @@ class StartPage(tk.Frame):
         self.interface_entry['validatecommand'] = (self.interface_entry.register(self.validate_int), '%P')
         self.interface_entry.grid(row=0, column=2, padx=10, pady=5, sticky='w')
 
-        # 📊 Sezione soglie protocolli
+        # Sezione soglie protocolli
         soglie_frame = ttk.LabelFrame(container, text="Critical threshold settings", padding=(20, 10))
         soglie_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
 
@@ -60,7 +58,7 @@ class StartPage(tk.Frame):
             entry.grid(row=i, column=1, padx=10, pady=5, sticky='w')
             self.entries.append(entry)
 
-        # 👁 Sezione Monitoraggio
+        # Sezione Monitoraggio
         monitor_frame = ttk.LabelFrame(container, text="Monitoring", padding=(20, 10))
         monitor_frame.grid(row=1, column=1, sticky="nsew", padx=10, pady=10)
 
@@ -77,7 +75,6 @@ class StartPage(tk.Frame):
         self.start_button = ttk.Button(self, text="Start scanning", command=self.start)
         self.start_button.pack(pady=(10, 5))
         self.start_button.bind("<Return>", lambda e: self.start())
-        #ttk.Button(self, text="Start scanning", command=self.start).pack(pady=(10, 5))
 
         # Lista ordinata di tutti i campi input (incluso il bottone finale)
         self.all_entries = [
@@ -87,15 +84,7 @@ class StartPage(tk.Frame):
             self.entry_ip,
             self.start_button  # ⬅️ Aggiunto il bottone alla navigazione
         ]
-        """
-        # Lista ordinata di tutti i campi input
-        self.all_entries = [
-            self.interface_entry,
-            *self.entries,  # TCP, UDP, ICMP, ARP
-            self.entry_porta,
-            self.entry_ip
-        ]
-        """
+
         for idx, entry in enumerate(self.all_entries):
             entry.bind("<Down>", lambda e, i=idx: self.focus_next(i))
             entry.bind("<Up>", lambda e, i=idx: self.focus_prev(i))

@@ -94,7 +94,6 @@ class ProtocolLiveGraph:
             self.protocol_data[proto].append(counter[proto])
             print(f"{proto}: {counter[proto]}")
 
-
         print('fatto')
         self.time_counter += 1
 
@@ -135,16 +134,8 @@ class ProtocolLiveGraph:
 
         max_visible_points = (cw - 2 * m) // self.x_spacing
         total_points = len(data)
-
-        #first_time = self.time_counter_dict[proto]  # default a 1 se mancante
-        #first_index = first_time # perché gli indici della lista partono da 0
-
-        # Calcola l'intervallo visibile limitato all'inizio effettivo
-        #start = max(first_index, total_points - max_visible_points - self.offset)
-        # Calcola l'inizio e la fine della finestra visibile in base all'offset
         start = max(0, total_points - max_visible_points - self.offset)
         end = min(total_points, start + max_visible_points)
-
         visible_data = data[start:end]
 
         if not visible_data:
@@ -158,7 +149,6 @@ class ProtocolLiveGraph:
         y_scale = (ch - 2 * m) / span
 
         # Tacche e valori Y con linee tratteggiate
-        # Tacche e valori Y solo interi, coerenti
         max_val = max(1, int(raw_max))  # Almeno 1
         step = max(1, round(max_val / 8))  # Fino a 8 tacche
 
@@ -169,7 +159,7 @@ class ProtocolLiveGraph:
             self.canvas.create_line(m, y, cw - m, y, fill="#e0e0e0", dash=(2, 2))
 
         # Tacche e etichette asse X (ogni 2 punti)
-        for i, _ in enumerate(visible_data):
+        for i, _ in enumerate(visible_data):    #i parte da 0
             x = m + i * self.x_spacing
             if i % 2 == 0:
                 self.canvas.create_line(x, ch - m, x, ch - m + 5, width=1)

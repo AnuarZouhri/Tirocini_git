@@ -40,7 +40,7 @@ class IpMacTable:
         self.tree.column("mac_src", width=20)
         self.tree.column("ip_dst", width=20)
         self.tree.column("mac_dst", width=20)
-        self.tree.column("count", width=9, anchor='center')
+        self.tree.column("count", width=9)
 
     def _toggle_group_by_ip(self):
         self.group_by_ip_src = True
@@ -63,10 +63,7 @@ class IpMacTable:
             return "break"
 
     def update_table(self, data):
-        '''print(len(data))
-        for i in data:
-            print(data)
-        print("")'''
+
         try:
             if not self.tree.winfo_exists():
                 return
@@ -91,15 +88,6 @@ class IpMacTable:
         selected_values = self.tree.item(selected_items[0], "values") if selected_items else None
 
         children = self.tree.get_children()
-        last_visible = False
-        if children:
-            last_item = children[-1]
-            bbox = self.tree.bbox(last_item)
-            if bbox:
-                y = bbox[1]
-                height = self.tree.winfo_height()
-                if y + bbox[3] <= height:
-                    last_visible = True
 
         # Cancella righe precedenti
         self.tree.delete(*children)
@@ -137,13 +125,7 @@ class IpMacTable:
             for item_id, values in new_items:
                 if values[:-1] == selected_values[:-1]:
                     self.tree.selection_set(item_id)
-                    self.tree.see(item_id)
                     break
-
-        # ✅ Scorri in fondo solo se l’ultima riga era visibile prima
-        if last_visible:
-            self.tree.update_idletasks()
-            self.tree.yview_moveto(1.0)
 
     def export_to_csv(self, filename):
         try:
