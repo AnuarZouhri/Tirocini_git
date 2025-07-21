@@ -2,7 +2,7 @@ import threading
 import time
 import csv
 import datetime
-
+import os
 from pyexpat.errors import messages
 
 
@@ -176,10 +176,15 @@ class ThreadAnalyzer(threading.Thread):
         inizio_str = self.get_time(inizio)
         fine_str = self.get_time(fine)
 
-        with open(self.log_path, mode='a', newline='') as file:
-            writer = csv.writer(file, delimiter=';')
-            writer.writerow([descrizione, inizio_str, fine_str])
+        file_esiste = os.path.exists(self.log_path)
+        file_vuoto = not file_esiste or os.path.getsize(self.log_path) == 0
 
+        with open(self.log_path, mode='a', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file, delimiter=';')
+            # Scrivi l'intestazione solo se il file è nuovo o vuoto
+            if file_vuoto:
+                writer.writerow(['Descrizione', 'Inizio', 'Fine'])  # <-- Personalizza qui i nomi delle colonne
+            writer.writerow([descrizione, inizio_str, fine_str])
 
     def send_alert(self):
         temp_alarm = self.alarm_list[:]

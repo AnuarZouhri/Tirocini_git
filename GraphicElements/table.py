@@ -141,7 +141,7 @@ class PacketTable:
             with open(filename, mode="w", newline="") as file:
                 writer = csv.writer(file, delimiter=';')
                 # Intestazioni colonna
-                writer.writerow(["Scan Id", "Frames", "TCP/UDP (%)", "Protocols", "Bit rate (bps)", "Time"])
+                writer.writerow(["Scan Id", "Frames", "TCP/UDP (%)", "Protocols", "Bit Rate (bps)", "Time"])
                 # Scrive tutte le righe visibili nella tabella
                 for item_id in self.tree.get_children():
                     values = self.tree.item(item_id, "values")

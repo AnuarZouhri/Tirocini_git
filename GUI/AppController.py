@@ -62,14 +62,21 @@ class AppController:
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
     def _init_files(self):
+        # Rimuove file dei protocolli, se esiste
         if os.path.exists(self.file_path):
             os.remove(self.file_path)
         with open(self.file_path, 'w') as file:
             file.write("PROTOCOLLO,DIMENSIONE\n")
-        if not os.path.exists(self.log_path):
-            with open(self.log_path, mode='w', newline='') as file:
-                writer = csv.writer(file)
-                writer.writerow(["Description", "Start", "End"])
+
+        # Rimuove file di log, se esiste
+        if os.path.exists(self.log_path):
+            os.remove(self.log_path)
+
+        # Crea e scrive intestazione nel file di log
+        with open(self.log_path, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(["Description", "Start", "End"])
+
 
     def show_frame(self, name):
         frame = self.frames[name]

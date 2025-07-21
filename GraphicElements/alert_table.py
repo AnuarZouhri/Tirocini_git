@@ -41,6 +41,7 @@ class DoSAlertTable(ttk.Frame):
 
         self.tree.insert("", "end", values=(alert, alert_time))
 
+    #Non usato ma può essere utile:
     def clear_all_alerts(self):
         try:
             if not self.tree.winfo_exists():

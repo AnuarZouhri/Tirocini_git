@@ -27,7 +27,7 @@ class LiveGraph:
 
         # Etichetta asse Y
         self.canvas.create_text(self.margin // 4,self.height // 2,
-                                text="Average Byte", font=("Arial", 10, "bold"),
+                                text="Average Size (Bytes)", font=("Arial", 10, "bold"),
                                 angle=90)
 
         # Linee assi X e Y
