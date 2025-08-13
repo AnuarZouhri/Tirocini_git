@@ -58,7 +58,7 @@ def generate_statistics(start_time,
         fig.text(0.75, 0.725, f"End: {fine}", fontsize=15, ha='center')
         fig.text(0.1, 0.60, f"Total packets: {len(dimensioni_all)}", fontsize=14, ha='left')
         fig.text(0.1, 0.55, f"Avg size of packets (Bytes): {round(np.mean(dimensioni_all),2)}", fontsize=14, ha='left')
-        fig.text(0.1, 0.50, f"Median of packets'size: {np.median(dimensioni_all)}", fontsize=14, ha='left')
+        fig.text(0.1, 0.50, f"Median packet size (Bytes): {np.median(dimensioni_all)}", fontsize=14, ha='left')
 
         #fig.text(0.1, 0.45, f"Deviazione standard stimata sulla dimensione dei pacchetti: {round(dev_std(dimensioni_all),2)}", fontsize=14, ha='left')
 

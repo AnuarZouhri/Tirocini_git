@@ -97,8 +97,6 @@ class ProtocolLiveGraph:
         print('fatto')
         self.time_counter += 1
 
-        # Se sono arrivati nuovi protocolli, aggiorna il dropdown
-
         self.refresh_dropdown()
 
         # Mostra nuovo grafico se siamo in fondo

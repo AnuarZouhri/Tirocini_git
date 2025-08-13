@@ -78,13 +78,9 @@ class LiveGraph:
         if len(self.data) < 2:
             return
 
-        raw_max = max(self.data)
-        raw_min = min(self.data)
-        padding = 0.05 * (raw_max - raw_min or 1)
-
-        max_val = raw_max + padding
-        min_val = raw_min - padding
-        span = max_val - min_val
+        max_val = max(self.data)
+        min_val = min(self.data)
+        span = (max_val - min_val) or 1
         y_scale = (self.height - 2 * self.margin) / span
 
         start_x = self.margin
@@ -100,7 +96,6 @@ class LiveGraph:
             self.canvas.create_line(x1, y1, x2, y2, fill='blue', width=2)
         for x, y in pts:
             self.canvas.create_oval(x - 3, y - 3, x + 3, y + 3, fill='red')
-
 
     def update(self, new_data):
         if new_data:

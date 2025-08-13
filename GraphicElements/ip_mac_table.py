@@ -92,7 +92,7 @@ class IpMacTable:
         # Cancella righe precedenti
         self.tree.delete(*children)
 
-        # Costruzione nuova tabella
+        # Ordinamento nuova tabella
         if self.group_by_ip_src:
             grouped_by_ip = defaultdict(list)
             for (ip_src, mac_src, ip_dst, mac_dst), count in self.packet_counts.items():

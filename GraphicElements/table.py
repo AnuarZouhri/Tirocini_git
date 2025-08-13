@@ -34,7 +34,6 @@ class PacketTable:
         self.tree.column("count", width=70,stretch=False)
         self.tree.column("tcp_udp", width=20)
         self.tree.column("protocols", width=240, anchor='w', stretch=False)
-        #self.tree.column("protocols", width=20)
         self.tree.column("bitrate", width=95,stretch=False)
         self.tree.column("time", width=150,stretch=False)
 

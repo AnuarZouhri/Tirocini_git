@@ -1,3 +1,4 @@
+
 import tkinter as tk
 from collections import Counter
 import random
@@ -12,7 +13,7 @@ class TopDestPortsGraph(tk.Frame):
         self.bar_height = 25
         self.bar_spacing = 5
 
-        self.canvas = tk.Canvas(self, width=self.width, height=self.height, bg='white')
+        self.canvas = tk.Canvas(self, height=self.height, width=self.width, bg='white')
         self.canvas.pack(fill='both')
 
         self.port_counts = Counter()
@@ -29,6 +30,7 @@ class TopDestPortsGraph(tk.Frame):
             return
         for pkt in data:
             self.port_counts[pkt['port dst']] += 1
+
         # Titolo
         self.canvas.create_text(
             self.width // 2, 15, text="Top 10 Destination Ports",
@@ -72,4 +74,5 @@ class TopDestPortsGraph(tk.Frame):
             )
 
             y += self.bar_height + self.bar_spacing
+
 

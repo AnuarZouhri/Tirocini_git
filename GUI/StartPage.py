@@ -52,7 +52,7 @@ class StartPage(tk.Frame):
         soglie_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
 
         for i, nome in enumerate(self.protocolli):
-            ttk.Label(soglie_frame, text=f"Theshold {nome}:").grid(row=i, column=0, padx=10, pady=5, sticky='e')
+            ttk.Label(soglie_frame, text=f"Threshold {nome}:").grid(row=i, column=0, padx=10, pady=5, sticky='e')
             entry = ttk.Entry(soglie_frame, width=25, validate='key')
             entry['validatecommand'] = (entry.register(self.validate_int), '%P')
             entry.grid(row=i, column=1, padx=10, pady=5, sticky='w')
